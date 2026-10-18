@@ -57,3 +57,16 @@ public:
       : color_a(a), color_b(b), tilesize(t) {};
   void draw() override;
 };
+
+class Velocity : public Component {
+public:
+  Vector2 value = {0, 0};
+  Velocity(Vector2 value) : value(value) {};
+};
+
+class Lifetime : public Component {
+public:
+  int frames_left = 0;
+  Lifetime(int frames_left) : frames_left(frames_left) {};
+  void update(float dt) override;
+};

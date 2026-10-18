@@ -37,6 +37,7 @@ void PlayerController::update(float dt) {
   auto *t = owner->get<c_Transform>();
   if (!t)
     return;
+  // movement --------------------------
   if (IsKeyDown(KEY_A))
     t->position.x -= speed * dt;
   if (IsKeyDown(KEY_W))
@@ -45,6 +46,16 @@ void PlayerController::update(float dt) {
     t->position.y += speed * dt;
   if (IsKeyDown(KEY_D))
     t->position.x += speed * dt;
+  // shooting
+  if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    auto &b = owner->scene->create();
+    b.scene = owner->scene;
+    b.add<c_Transform>(Vector2{t->position.x, t->position.y});
+    b.add<Velocity>(Vector2{0, 0});
+    b.add<Lifetime>(100);
+    b.add<RectangleRenderer>((Rectangle){t->position.x, t->position.y, 20, 20},
+                             BLUE);
+  }
 };
 
 void BackgroundRenderer::draw() {
@@ -73,3 +84,9 @@ void BackgroundRenderer::draw() {
     }
   }
 }
+
+void Lifetime::update(float dt) {
+  frames_left--;
+  if (frames_left <= 0)
+    this->owner->scene->destroy(this->owner);
+};
