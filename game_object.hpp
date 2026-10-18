@@ -27,6 +27,7 @@ public:
   }
 
   Scene *scene = nullptr;
+  bool destroyed = false;
 
   void draw();
   void update(float dt);

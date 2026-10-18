@@ -8,10 +8,13 @@ class c_Camera;
 class Scene {
 private:
   std::vector<std::unique_ptr<GameObject>> contents;
+  std::vector<std::unique_ptr<GameObject>> pendingAdditions;
+  std::vector<GameObject *> pendingDestructions;
   c_Camera *activeCamera = nullptr;
 
 public:
   GameObject &create();
+  void destroy(GameObject *go);
   void setActiveCamera(c_Camera *cam) { activeCamera = cam; };
 
   void draw();
