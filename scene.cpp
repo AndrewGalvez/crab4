@@ -36,8 +36,8 @@ void Scene::update(float dt) {
     auto it = std::stable_partition(
         contents.begin(), contents.end(), [this](const auto &go) {
           return std::find(pendingDestructions.begin(),
-                           pendingDestructions.end(), go.get()),
-                 pendingDestructions.end();
+                           pendingDestructions.end(),
+                           go.get()) == pendingDestructions.end();
         });
     contents.erase(it, contents.end());
     pendingDestructions.clear();
