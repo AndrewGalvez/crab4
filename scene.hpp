@@ -27,4 +27,12 @@ public:
         res.push_back(go.get());
     return res;
   }
+
+  template <typename T> GameObject *findFirstWithComponent() {
+    GameObject *res = nullptr;
+    for (auto &go : contents)
+      if (go->get<T>())
+        res = go.get();
+    return res;
+  }
 };
