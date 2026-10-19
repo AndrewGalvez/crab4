@@ -141,15 +141,41 @@ void GameManager::update(float dt) {
   if (frame > 60) {
     frame = 0;
 
-    if (owner->scene->findAllWithComponent<PlayerController>().empty())
+    auto *p = owner->scene->findFirstWithComponent<PlayerController>();
+    if (!p)
       return;
-    auto *p =
-        owner->scene->findAllWithComponent<PlayerController>()[0]; // only ever
-                                                                   // one player
+
+    auto *c = owner->scene->findFirstWithComponent<c_Camera>();
+    if (!c)
+      return;
+
+    auto cam = c->get<c_Camera>()->camera;
+
+    float camera_left_x = cam.target.x - cam.offset.x / cam.zoom;
+    float camera_right_x =
+        cam.target.x + (GetScreenWidth() - cam.offset.x) / cam.zoom;
+    float camera_top_y = cam.target.y - cam.offset.y / cam.zoom;
+    float camera_bottom_y =
+        cam.target.y + (GetScreenHeight() - cam.offset.y) / cam.zoom;
+
+    // spawning position
+    bool left_cam = GetRandomValue(0, 100) % 2;
+
+    float x, y, w, h;
+    w = 100;
+    h = 100;
+
+    if (left_cam) {
+      x = camera_left_x - GetRandomValue(10, 40) - w;
+      y = GetRandomValue(camera_bottom_y + 40, camera_top_y - 40);
+    } else {
+      x = camera_right_x + GetRandomValue(10, 40);
+      y = GetRandomValue(camera_bottom_y + 40, camera_top_y - 40);
+    }
 
     auto &e = owner->scene->create();
-    e.add<c_Transform>(Vector2{-1000, -1000}, Vector2{100, 100});
-    e.add<RectangleRenderer>(Rectangle{0, 0, 100, 100}, GREEN);
+    e.add<c_Transform>(Vector2{x, y}, Vector2{w, h});
+    e.add<RectangleRenderer>(Rectangle{x, y, w, h}, GREEN);
     e.add<EnemyController>(200.0f, p->get<c_Transform>());
   }
 };
