@@ -91,3 +91,20 @@ class PhysicsManager : public Component {
 public:
   void update(float dt) override;
 };
+
+class Bullet : public Component {
+public:
+  int damage;
+  Bullet(int damage = 1) : damage(damage) {}
+};
+
+class Health : public Component {
+public:
+  int value;
+  Health(int value = 1) : value(value) {}
+};
+
+class CollisionManager : public Component {
+public:
+  void update(float dt) override;
+};

@@ -75,6 +75,7 @@ void PlayerController::update(float dt) {
     b.add<Lifetime>(100);
     b.add<PhysicsManager>();
     b.add<RectangleRenderer>((Rectangle){x, y, sx, sy}, BLUE);
+    b.add<Bullet>(1);
   }
 };
 
@@ -177,5 +178,36 @@ void GameManager::update(float dt) {
     e.add<c_Transform>(Vector2{x, y}, Vector2{w, h});
     e.add<RectangleRenderer>(Rectangle{x, y, w, h}, GREEN);
     e.add<EnemyController>(200.0f, p->get<c_Transform>());
+    e.add<Health>(1);
   }
 };
+
+Rectangle rectOf(GameObject *go) {
+  auto *t = go->get<c_Transform>();
+  return {t->position.x, t->position.y, t->scale.x, t->scale.y};
+};
+
+void CollisionManager::update(float dt) {
+  auto bullets = owner->scene->findAllWithComponent<Bullet>();
+  auto targets = owner->scene->findAllWithComponent<Health>();
+
+  for (auto *b : bullets) {
+    if (b->destroyed || !b->get<c_Transform>())
+      continue;
+    Rectangle br = rectOf(b);
+
+    for (auto *e : targets) {
+      if (e->destroyed || !e->get<c_Transform>())
+        continue;
+
+      if (CheckCollisionRecs(br, rectOf(e))) {
+        auto *hp = e->get<Health>();
+        hp->value -= b->get<Bullet>()->damage;
+        owner->scene->destroy(b);
+        if (hp->value <= 0)
+          owner->scene->destroy(e);
+        break;
+      }
+    }
+  };
+}

@@ -5,6 +5,7 @@ int main() {
   InitWindow(800, 600, "crab 4");
   SetTargetFPS(60);
 
+  SetRandomSeed(time(NULL));
   {
     Game game;
 

@@ -17,6 +17,9 @@ Game::Game() {
   // game manager -------------------------------
   auto &gameManager = scene.create();
   gameManager.add<GameManager>();
+  // collision manager --------------------------
+  auto &collisionManager = scene.create();
+  collisionManager.add<CollisionManager>();
   // camera ---------------------------------------
   auto &cam = scene.create();
   cam.add<c_Transform>(Vector2{0, 0}, Vector2{1, 1});
