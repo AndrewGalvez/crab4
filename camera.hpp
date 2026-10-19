@@ -18,6 +18,5 @@ public:
 
   const Camera2D &raw() const { return camera; }
 
-private:
   Camera2D camera{};
 };

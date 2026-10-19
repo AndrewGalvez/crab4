@@ -5,6 +5,7 @@
 #include "scene.hpp"
 #include <cmath>
 #include <raylib.h>
+#include <raymath.h>
 #include <string>
 
 void RectangleRenderer::draw() { DrawRectangleRec(rect, color); }
@@ -15,6 +16,8 @@ void RectangleRenderer::update(float dt) {
     return;
   rect.x = t->position.x;
   rect.y = t->position.y;
+  rect.width = t->scale.x;
+  rect.height = t->scale.y;
 }
 
 void UIPositionLabel::drawUI() {
@@ -48,13 +51,30 @@ void PlayerController::update(float dt) {
     t->position.x += speed * dt;
   // shooting
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (owner->scene->findAllWithComponent<c_Camera>().empty())
+      return;
+
     auto &b = owner->scene->create();
     b.scene = owner->scene;
-    b.add<c_Transform>(Vector2{t->position.x, t->position.y});
-    b.add<Velocity>(Vector2{0, 0});
+    float sx = 20;
+    float sy = 20;
+    float x = (t->position.x + (t->scale.x / 2)) - sx / 2;
+    float y = (t->position.y + (t->scale.y / 2)) - sy / 2;
+
+    b.add<c_Transform>(Vector2{x, y}, Vector2{sx, sy});
+    Vector2 v = Vector2Scale(
+        Vector2Normalize(Vector2Subtract(
+            GetScreenToWorld2D(GetMousePosition(),
+                               owner->scene->findAllWithComponent<c_Camera>()[0]
+                                   ->get<c_Camera>()
+                                   ->raw()),
+            (Vector2){x, y})),
+        5000.0f);
+
+    b.add<Velocity>(v);
     b.add<Lifetime>(100);
-    b.add<RectangleRenderer>((Rectangle){t->position.x, t->position.y, 20, 20},
-                             BLUE);
+    b.add<PhysicsManager>();
+    b.add<RectangleRenderer>((Rectangle){x, y, sx, sy}, BLUE);
   }
 };
 
@@ -89,4 +109,47 @@ void Lifetime::update(float dt) {
   frames_left--;
   if (frames_left <= 0)
     this->owner->scene->destroy(this->owner);
+};
+
+void PhysicsManager::update(float dt) {
+  auto *t = owner->get<c_Transform>();
+  if (!t)
+    return;
+  auto *v = owner->get<Velocity>();
+  if (!v)
+    return;
+  t->position.x += v->value.x * dt;
+  t->position.y += v->value.y * dt;
+}
+
+void EnemyController::update(float dt) {
+  auto *t = owner->get<c_Transform>();
+  if (!t)
+    return;
+
+  float dx = target->position.x - t->position.x;
+  float dy = target->position.y - t->position.y;
+  float m = std::sqrt(dx * dx + dy * dy);
+
+  t->position.x += dx / m * (speed * dt);
+  t->position.y += dy / m * (speed * dt);
+};
+
+void GameManager::update(float dt) {
+  frame++;
+  // spawn an enemy every second
+  if (frame > 60) {
+    frame = 0;
+
+    if (owner->scene->findAllWithComponent<PlayerController>().empty())
+      return;
+    auto *p =
+        owner->scene->findAllWithComponent<PlayerController>()[0]; // only ever
+                                                                   // one player
+
+    auto &e = owner->scene->create();
+    e.add<c_Transform>(Vector2{-1000, -1000}, Vector2{100, 100});
+    e.add<RectangleRenderer>(Rectangle{0, 0, 100, 100}, GREEN);
+    e.add<EnemyController>(200.0f, p->get<c_Transform>());
+  }
 };

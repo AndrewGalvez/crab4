@@ -10,13 +10,16 @@ Game::Game() {
 
   // player ---------------------------------------
   auto &player = scene.create();
-  player.add<c_Transform>((Vector2){0, 0});
+  player.add<c_Transform>((Vector2){0, 0}, (Vector2){100, 100});
   player.add<RectangleRenderer>((Rectangle){0, 0, 100, 100}, RED);
   player.add<UIPositionLabel>();
   player.add<PlayerController>(1000);
+  // game manager -------------------------------
+  auto &gameManager = scene.create();
+  gameManager.add<GameManager>();
   // camera ---------------------------------------
   auto &cam = scene.create();
-  cam.add<c_Transform>(Vector2{0, 0});
+  cam.add<c_Transform>(Vector2{0, 0}, Vector2{1, 1});
   auto &camraw = cam.add<c_Camera>();
   camraw.target = &player;
   camraw.targetOffset = {50, 50};

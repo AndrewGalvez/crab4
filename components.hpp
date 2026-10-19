@@ -6,7 +6,8 @@
 class c_Transform : public Component {
 public:
   Vector2 position = {0, 0};
-  explicit c_Transform(Vector2 p = {0, 0}) : position(p) {}
+  Vector2 scale = {0, 0};
+  explicit c_Transform(Vector2 p, Vector2 scale) : position(p), scale(scale) {}
 };
 
 class Renderer : public Component {};
@@ -47,6 +48,21 @@ public:
   void update(float dt) override;
 };
 
+class EnemyController : public Component {
+public:
+  float speed;
+  c_Transform *target;
+  EnemyController(float speed, c_Transform *target)
+      : speed(speed), target(target) {};
+  void update(float dt) override;
+};
+
+class GameManager : public Component {
+public:
+  int frame = 0;
+  void update(float dt) override;
+};
+
 // tiles
 class BackgroundRenderer : public Renderer {
 public:
@@ -68,5 +84,10 @@ class Lifetime : public Component {
 public:
   int frames_left = 0;
   Lifetime(int frames_left) : frames_left(frames_left) {};
+  void update(float dt) override;
+};
+
+class PhysicsManager : public Component {
+public:
   void update(float dt) override;
 };
