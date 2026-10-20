@@ -6,6 +6,7 @@ int main() {
   SetTargetFPS(60);
 
   SetRandomSeed(time(NULL));
+
   {
     Game game;
 

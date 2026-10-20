@@ -40,6 +40,7 @@ void PlayerController::update(float dt) {
   auto *t = owner->get<c_Transform>();
   if (!t)
     return;
+  float speed = stats.speed;
   // movement --------------------------
   if (IsKeyDown(KEY_A))
     t->position.x -= speed * dt;
@@ -69,13 +70,13 @@ void PlayerController::update(float dt) {
                                    ->get<c_Camera>()
                                    ->raw()),
             (Vector2){x, y})),
-        5000.0f);
+        stats.bulletSpeed);
 
     b.add<Velocity>(v);
     b.add<Lifetime>(100);
     b.add<PhysicsManager>();
     b.add<RectangleRenderer>((Rectangle){x, y, sx, sy}, BLUE);
-    b.add<Bullet>(1);
+    b.add<Bullet>(stats.bulletDamage);
   }
 };
 
@@ -121,6 +122,35 @@ void PhysicsManager::update(float dt) {
     return;
   t->position.x += v->value.x * dt;
   t->position.y += v->value.y * dt;
+  auto *f = owner->get<Friction>();
+  if (!f)
+    return;
+  if (v->value.x > 0) {
+    if (v->value.x > f->value) {
+      v->value.x -= f->value;
+    } else {
+      v->value.x = 0;
+    }
+  } else if (v->value.x < 0) {
+    if (v->value.x < -f->value) {
+      v->value.x += f->value;
+    } else {
+      v->value.x = 0;
+    }
+  }
+  if (v->value.y > 0) {
+    if (v->value.y > f->value) {
+      v->value.y -= f->value;
+    } else {
+      v->value.y = 0;
+    }
+  } else if (v->value.y < 0) {
+    if (v->value.y < -f->value) {
+      v->value.y += f->value;
+    } else {
+      v->value.y = 0;
+    }
+  }
 }
 
 void EnemyController::update(float dt) {
@@ -138,8 +168,8 @@ void EnemyController::update(float dt) {
 
 void GameManager::update(float dt) {
   frame++;
-  // spawn an enemy every second
-  if (frame > 60) {
+  // spawn three enemies every second
+  if (frame > 20) {
     frame = 0;
 
     auto *p = owner->scene->findFirstWithComponent<PlayerController>();
@@ -160,25 +190,43 @@ void GameManager::update(float dt) {
         cam.target.y + (GetScreenHeight() - cam.offset.y) / cam.zoom;
 
     // spawning position
-    bool left_cam = GetRandomValue(0, 100) % 2;
+    int top_left_right_bottom_cam = GetRandomValue(0, 3);
 
     float x, y, w, h;
     w = 100;
     h = 100;
 
-    if (left_cam) {
-      x = camera_left_x - GetRandomValue(10, 40) - w;
-      y = GetRandomValue(camera_bottom_y + 40, camera_top_y - 40);
-    } else {
+    switch (top_left_right_bottom_cam) {
+    case 0:
+      // top
+      x = GetRandomValue(camera_left_x - w, camera_right_x);
+      y = camera_top_y - h - GetRandomValue(10, 40);
+      break;
+    case 1:
+      // left
+      x = camera_left_x - w - GetRandomValue(10, 40);
+      y = GetRandomValue(camera_top_y - h, camera_bottom_y);
+      break;
+    case 2:
+      // right
       x = camera_right_x + GetRandomValue(10, 40);
-      y = GetRandomValue(camera_bottom_y + 40, camera_top_y - 40);
+      y = GetRandomValue(camera_top_y - h, camera_bottom_y);
+      break;
+    case 3:
+      // bottom
+      x = GetRandomValue(camera_left_x - w, camera_right_x);
+      y = camera_bottom_y + h + GetRandomValue(10, 40);
+      break;
     }
 
     auto &e = owner->scene->create();
     e.add<c_Transform>(Vector2{x, y}, Vector2{w, h});
     e.add<RectangleRenderer>(Rectangle{x, y, w, h}, GREEN);
     e.add<EnemyController>(200.0f, p->get<c_Transform>());
-    e.add<Health>(1);
+    e.add<Health>(50);
+    e.add<Velocity>(Vector2{0, 0});
+    e.add<PhysicsManager>();
+    e.add<Friction>(200.0f);
   }
 };
 
@@ -203,6 +251,7 @@ void CollisionManager::update(float dt) {
       if (CheckCollisionRecs(br, rectOf(e))) {
         auto *hp = e->get<Health>();
         hp->value -= b->get<Bullet>()->damage;
+        e->get<Velocity>()->value = b->get<Velocity>()->value;
         owner->scene->destroy(b);
         if (hp->value <= 0)
           owner->scene->destroy(e);

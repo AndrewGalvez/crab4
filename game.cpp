@@ -13,7 +13,8 @@ Game::Game() {
   player.add<c_Transform>((Vector2){0, 0}, (Vector2){100, 100});
   player.add<RectangleRenderer>((Rectangle){0, 0, 100, 100}, RED);
   player.add<UIPositionLabel>();
-  player.add<PlayerController>(1000);
+  auto pstats = PlayerStats();
+  player.add<PlayerController>(pstats);
   // game manager -------------------------------
   auto &gameManager = scene.create();
   gameManager.add<GameManager>();
