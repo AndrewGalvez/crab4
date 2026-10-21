@@ -4,7 +4,9 @@
 class Lifetime : public Component {
 public:
   int frames_left = 0;
-  Lifetime(int frames_left) : frames_left(frames_left) {};
+  int frames_start = 0;
+  Lifetime(int frames_left)
+      : frames_left(frames_left), frames_start(frames_left) {};
   void update(float dt) override;
 };
 

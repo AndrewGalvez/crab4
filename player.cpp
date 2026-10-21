@@ -6,6 +6,7 @@
 #include "raymath.h"
 #include "renderers.hpp"
 #include "scene.hpp"
+#include <raylib.h>
 
 void PlayerController::update(float dt) {
   auto *t = owner->get<c_Transform>();
@@ -22,7 +23,7 @@ void PlayerController::update(float dt) {
   if (IsKeyDown(KEY_D))
     t->position.x += speed * dt;
   // shooting
-  if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
     if (!owner->scene->getActiveCamera())
       return;
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "component.hpp"
+#include "raylib.h"
 
 struct PlayerStats {
   float speed;

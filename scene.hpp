@@ -1,4 +1,5 @@
 #pragma once
+#include "assets.hpp"
 #include "game_object.hpp"
 #include <memory>
 #include <vector>
@@ -17,6 +18,7 @@ public:
   void destroy(GameObject *go);
   void setActiveCamera(c_Camera *cam) { activeCamera = cam; };
   const c_Camera *getActiveCamera() { return activeCamera; }
+  AssetManager asset_manager;
 
   void draw();
   void update(float dt);

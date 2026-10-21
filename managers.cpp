@@ -22,12 +22,23 @@ void CollisionManager::update(float dt) {
         continue;
 
       if (CheckCollisionRecs(br, rectOf(e))) {
+        // play sound
+        owner->scene->asset_manager.playSound(
+            (const char *[3]){"assets/hit1.wav", "assets/hit2.wav",
+                              "assets/hit3.wav"}[GetRandomValue(0, 2)]);
+
         auto *hp = e->get<Health>();
         hp->value -= b->get<Bullet>()->damage;
         e->get<Velocity>()->value = b->get<Velocity>()->value;
         owner->scene->destroy(b);
-        if (hp->value <= 0)
+        if (hp->value <= 0) {
           owner->scene->destroy(e);
+          auto &d = owner->scene->create();
+          d.add<RectangleRenderer>(e->get<RectangleRenderer>()->rect,
+                                   Color{255, 0, 0, 255});
+          d.add<Lifetime>(60);
+          d.add<DeadEnemy>();
+        }
         break;
       }
     }
@@ -37,7 +48,7 @@ void CollisionManager::update(float dt) {
 void GameManager::update(float dt) {
   frame++;
   // spawn three enemies every second
-  if (frame > 20) {
+  if (frame > 2) {
     frame = 0;
 
     auto *p = owner->scene->findFirstWithComponent<PlayerController>();
@@ -91,7 +102,7 @@ void GameManager::update(float dt) {
     e.add<c_Transform>(Vector2{x, y}, Vector2{w, h});
     e.add<RectangleRenderer>(Rectangle{x, y, w, h}, GREEN);
     e.add<EnemyController>(200.0f, p->get<c_Transform>());
-    e.add<Health>(50);
+    e.add<Health>(50000);
     e.add<Velocity>(Vector2{0, 0});
     e.add<PhysicsManager>();
     e.add<Friction>(200.0f);

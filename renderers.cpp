@@ -8,6 +8,7 @@
 void RectangleRenderer::draw() { DrawRectangleRec(rect, color); }
 
 void RectangleRenderer::update(float dt) {
+  color.a = (unsigned char)opacity;
   auto *t = owner->get<c_Transform>();
   if (!t)
     return;

@@ -1,6 +1,8 @@
 #include "enemies.hpp"
 #include "component.hpp"
+#include "components.hpp"
 #include "game_object.hpp"
+#include "renderers.hpp"
 #include <cmath>
 
 void EnemyController::update(float dt) {
@@ -16,4 +18,15 @@ void EnemyController::update(float dt) {
 
   t->position.x += dx / m * (speed * dt);
   t->position.y += dy / m * (speed * dt);
+};
+
+void DeadEnemy::update(float dt) {
+  auto *l = owner->get<Lifetime>();
+  auto *rr = owner->get<RectangleRenderer>();
+
+  if (!l || !rr)
+    return;
+
+  rr->opacity =
+      (float)((float)l->frames_left / (float)l->frames_start) * 255.0f;
 };

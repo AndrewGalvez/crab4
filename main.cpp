@@ -7,6 +7,10 @@ int main() {
 
   SetRandomSeed(time(NULL));
 
+  ChangeDirectory(GetApplicationDirectory());
+
+  InitAudioDevice();
+
   {
     Game game;
 
@@ -22,6 +26,8 @@ int main() {
       EndDrawing();
     }
   }
+
+  InitAudioDevice();
 
   CloseWindow();
   return 0;

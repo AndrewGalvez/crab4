@@ -10,3 +10,8 @@ public:
       : speed(speed), target(target) {};
   void update(float dt) override;
 };
+
+class DeadEnemy : public Component {
+public:
+  void update(float dt) override;
+};

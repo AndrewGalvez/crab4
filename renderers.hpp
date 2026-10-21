@@ -9,6 +9,7 @@ class RectangleRenderer : public Renderer {
 public:
   Rectangle rect;
   Color color;
+  int opacity = 255;
   RectangleRenderer(Rectangle rect, Color color) : rect(rect), color(color) {};
 
   void draw() override;
