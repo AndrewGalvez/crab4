@@ -23,7 +23,7 @@ void PlayerController::update(float dt) {
   if (IsKeyDown(KEY_D))
     t->position.x += speed * dt;
   // shooting
-  if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+  if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
     if (!owner->scene->getActiveCamera())
       return;
 

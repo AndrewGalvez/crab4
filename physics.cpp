@@ -1,6 +1,5 @@
 #include "physics.hpp"
 #include "game_object.hpp"
-#include "scene.hpp"
 
 void PhysicsManager::update(float dt) {
   auto *t = owner->get<c_Transform>();

@@ -7,6 +7,7 @@
 #include "renderers.hpp"
 #include "scene.hpp"
 #include "utils.hpp"
+#include <raymath.h>
 
 void CollisionManager::update(float dt) {
   auto bullets = owner->scene->findAllWithComponent<Bullet>();
@@ -29,7 +30,8 @@ void CollisionManager::update(float dt) {
 
         auto *hp = e->get<Health>();
         hp->value -= b->get<Bullet>()->damage;
-        e->get<Velocity>()->value = b->get<Velocity>()->value;
+        e->get<Velocity>()->value =
+            Vector2Add(e->get<Velocity>()->value, b->get<Velocity>()->value);
         owner->scene->destroy(b);
         if (hp->value <= 0) {
           owner->scene->destroy(e);
@@ -48,7 +50,7 @@ void CollisionManager::update(float dt) {
 void GameManager::update(float dt) {
   frame++;
   // spawn three enemies every second
-  if (frame > 2) {
+  if (frame > 20) {
     frame = 0;
 
     auto *p = owner->scene->findFirstWithComponent<PlayerController>();
@@ -102,7 +104,7 @@ void GameManager::update(float dt) {
     e.add<c_Transform>(Vector2{x, y}, Vector2{w, h});
     e.add<RectangleRenderer>(Rectangle{x, y, w, h}, GREEN);
     e.add<EnemyController>(200.0f, p->get<c_Transform>());
-    e.add<Health>(50000);
+    e.add<Health>(50);
     e.add<Velocity>(Vector2{0, 0});
     e.add<PhysicsManager>();
     e.add<Friction>(200.0f);
