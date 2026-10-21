@@ -1,6 +1,9 @@
 #include "game.hpp"
 #include "camera.hpp"
-#include "components.hpp"
+#include "managers.hpp"
+#include "physics.hpp"
+#include "player.hpp"
+#include "renderers.hpp"
 #include "scene.hpp"
 
 Game::Game() {

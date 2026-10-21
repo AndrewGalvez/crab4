@@ -1,6 +1,7 @@
 #include "camera.hpp"
 #include "components.hpp"
 #include "game_object.hpp"
+#include "physics.hpp"
 #include <cmath>
 
 c_Camera::c_Camera() {

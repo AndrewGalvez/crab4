@@ -11,6 +11,8 @@ GameObject &Scene::create() {
 }
 
 void Scene::destroy(GameObject *go) {
+  if (go->destroyed)
+    return;
   go->destroyed = true;
   pendingDestructions.push_back(go);
 }

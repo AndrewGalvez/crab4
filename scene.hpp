@@ -16,6 +16,7 @@ public:
   GameObject &create();
   void destroy(GameObject *go);
   void setActiveCamera(c_Camera *cam) { activeCamera = cam; };
+  const c_Camera *getActiveCamera() { return activeCamera; }
 
   void draw();
   void update(float dt);
@@ -31,8 +32,10 @@ public:
   template <typename T> GameObject *findFirstWithComponent() {
     GameObject *res = nullptr;
     for (auto &go : contents)
-      if (go->get<T>())
+      if (go->get<T>()) {
         res = go.get();
+        return res;
+      }
     return res;
   }
 };
