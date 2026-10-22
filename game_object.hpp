@@ -11,6 +11,8 @@ private:
 
 public:
   template <typename T, typename... Args> T &add(Args &&...args) {
+    static_assert(std::is_base_of_v<Component, T>,
+                  "add<T>: T must derive from Component");
     auto c = std::make_unique<T>(std::forward<Args>(args)...);
     T &ref = *c;
     c->owner = this;
@@ -19,6 +21,8 @@ public:
   }
 
   template <typename T> T *get() {
+    static_assert(std::is_base_of_v<Component, T>,
+                  "get<T>: T must derive from Component");
     for (auto &c : components) {
       if (auto *p = dynamic_cast<T *>(c.get()))
         return p;
