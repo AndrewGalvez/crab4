@@ -51,3 +51,15 @@ void PlayerController::update(float dt) {
     b.add<Bullet>(stats.bulletDamage);
   }
 };
+
+void PlayerHealthbar::drawUI() {
+  if (!health || !maxHealth)
+    return;
+  float w = 200;
+  float h = 20;
+  float y = 10;
+  float x = GetScreenWidth() / 2.0f - w / 2.0f;
+  DrawRectangle(x, y, w, h, GRAY);
+  DrawRectangle(x + 2, y + 2, w - 4, h - 4, RED);
+  DrawRectangle(x + 2, y + 2, w - 4 - w * (*health / *maxHealth), h - 4, GREEN);
+};

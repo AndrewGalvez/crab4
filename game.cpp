@@ -18,6 +18,8 @@ Game::Game() {
   player.add<UIPositionLabel>();
   auto pstats = PlayerStats();
   player.add<PlayerController>(pstats);
+  player.add<PlayerHealthbar>(&player.get<PlayerStats>()->health,
+                              &player.get<PlayerStats>()->maxHealth);
   // game manager -------------------------------
   auto &gameManager = scene.create();
   gameManager.add<GameManager>();

@@ -44,8 +44,28 @@ void CollisionManager::update(float dt) {
         break;
       }
     }
-  };
-}
+  }
+
+  auto enemies = owner->scene->findAllWithComponent<EnemyController>();
+  auto *player = owner->scene->findFirstWithComponent<PlayerController>();
+
+  for (auto *e : enemies) {
+    if (e->destroyed || !e->get<c_Transform>())
+      continue;
+    if (CheckCollisionRecs(rectOf(player), rectOf(e))) {
+      owner->scene->asset_manager.playSound("assets/hurt.wav");
+
+      c_Transform *pt = player->get<c_Transform>();
+      c_Transform *et = e->get<c_Transform>();
+      Velocity *ev = e->get<Velocity>();
+      player->get<PlayerController>()->stats.health -= 25;
+      e->get<Velocity>()->value =
+          Vector2Add(ev->value, Vector2Scale(Vector2Normalize(Vector2Subtract(
+                                                 et->position, pt->position)),
+                                             4000.0f));
+    }
+  }
+};
 
 void GameManager::update(float dt) {
   frame++;

@@ -1,6 +1,5 @@
 #pragma once
 #include "component.hpp"
-#include "raylib.h"
 
 struct PlayerStats {
   float speed;
@@ -21,4 +20,13 @@ public:
   PlayerStats stats;
   PlayerController(PlayerStats stats) : stats(stats) {};
   void update(float dt) override;
+};
+
+class PlayerHealthbar : public Component {
+public:
+  float *health;
+  float *maxHealth;
+  void drawUI() override;
+  PlayerHealthbar(float *health, float *maxhealth)
+      : health(health), maxHealth(maxhealth) {}
 };
