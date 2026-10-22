@@ -84,11 +84,9 @@ void GameManager::update(float dt) {
     auto cam = c->get<c_Camera>()->camera;
 
     float camera_left_x = cam.target.x - cam.offset.x / cam.zoom;
-    float camera_right_x =
-        cam.target.x + (GetScreenWidth() - cam.offset.x) / cam.zoom;
+    float camera_right_x = cam.target.x + (800 - cam.offset.x) / cam.zoom;
     float camera_top_y = cam.target.y - cam.offset.y / cam.zoom;
-    float camera_bottom_y =
-        cam.target.y + (GetScreenHeight() - cam.offset.y) / cam.zoom;
+    float camera_bottom_y = cam.target.y + (800 - cam.offset.y) / cam.zoom;
 
     // spawning position
     int top_left_right_bottom_cam = GetRandomValue(0, 3);

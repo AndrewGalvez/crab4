@@ -1,5 +1,4 @@
 #include "camera.hpp"
-#include "components.hpp"
 #include "game_object.hpp"
 #include "physics.hpp"
 #include <cmath>
@@ -24,7 +23,7 @@ void c_Camera::update(float dt) {
 
   camera.target = {self->position.x + targetOffset.x,
                    self->position.y + targetOffset.y};
-  camera.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
+  camera.offset = {800 / 2.0f, 600 / 2.0f};
 }
 
 void c_Camera::begin() { BeginMode2D(camera); }

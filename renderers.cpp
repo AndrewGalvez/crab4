@@ -43,8 +43,7 @@ void BackgroundRenderer::draw() {
 
   // World-space corners of what's currently on screen
   Vector2 tl = GetScreenToWorld2D({0, 0}, cam);
-  Vector2 br = GetScreenToWorld2D(
-      {(float)GetScreenWidth(), (float)GetScreenHeight()}, cam);
+  Vector2 br = GetScreenToWorld2D({(float)800, (float)600}, cam);
 
   // Range of tile indices covering that area (floorf handles negatives)
   int x0 = (int)floorf(tl.x / tilesize.x);
