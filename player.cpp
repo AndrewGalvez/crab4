@@ -61,5 +61,7 @@ void PlayerHealthbar::drawUI() {
   float x = GetScreenWidth() / 2.0f - w / 2.0f;
   DrawRectangle(x, y, w, h, GRAY);
   DrawRectangle(x + 2, y + 2, w - 4, h - 4, RED);
-  DrawRectangle(x + 2, y + 2, w - 4 - w * (*health / *maxHealth), h - 4, GREEN);
+  if (*health < 0)
+    return;
+  DrawRectangle(x + 2, y + 2, -4 + w * (*health / *maxHealth), h - 4, GREEN);
 };
