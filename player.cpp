@@ -50,6 +50,10 @@ void PlayerController::update(float dt) {
     b.add<RectangleRenderer>((Rectangle){x, y, sx, sy}, BLUE);
     b.add<Bullet>(stats.bulletDamage);
   }
+
+  if ((!(this->stats.health <= 0)) &&
+      (this->stats.health <= this->stats.maxHealth))
+    this->stats.health += 0.05;
 };
 
 void PlayerHealthbar::drawUI() {
