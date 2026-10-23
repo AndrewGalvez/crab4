@@ -2,6 +2,7 @@
 #include "camera.hpp"
 #include "components.hpp"
 #include "enemies.hpp"
+#include "game.hpp"
 #include "player.hpp"
 #include "raylib.h"
 #include "renderers.hpp"
@@ -63,6 +64,10 @@ void CollisionManager::update(float dt) {
           Vector2Add(ev->value, Vector2Scale(Vector2Normalize(Vector2Subtract(
                                                  et->position, pt->position)),
                                              4000.0f));
+
+      if (player->get<PlayerController>()->stats.health <= 0) {
+        player->scene->game->switchTo("deadmenu");
+      }
     }
   }
 };
