@@ -6,6 +6,8 @@
 
 class c_Camera;
 
+class Game;
+
 class Scene {
 private:
   std::vector<std::unique_ptr<GameObject>> contents;
@@ -14,6 +16,7 @@ private:
   c_Camera *activeCamera = nullptr;
 
 public:
+  Game *game = nullptr;
   GameObject &create();
   void destroy(GameObject *go);
   void setActiveCamera(c_Camera *cam) { activeCamera = cam; };
