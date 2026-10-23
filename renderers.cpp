@@ -4,6 +4,7 @@
 #include "physics.hpp"
 #include "scene.hpp"
 #include <cmath>
+#include <raylib.h>
 
 void RectangleRenderer::draw() { DrawRectangleRec(rect, color); }
 
@@ -59,3 +60,7 @@ void BackgroundRenderer::draw() {
     }
   }
 }
+
+void UITextRenderer::drawUI() {
+  DrawText(value.c_str(), pos.x, pos.y, fontSize, color);
+};

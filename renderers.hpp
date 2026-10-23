@@ -25,6 +25,8 @@ public:
 
   UITextRenderer(std::string v, Color c, int fs, Vector2 p)
       : value(v), color(c), fontSize(fs), pos(p) {};
+
+  void drawUI() override;
 };
 
 class UIPositionLabel : public UITextRenderer {
