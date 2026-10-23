@@ -24,7 +24,10 @@ void Game::load(const std::string &name) {
 
 Game::Game() {
   addScene("mainmenu", [](Scene &scene) {});
-  addScene("deadmenu", [](Scene &scene) {});
+  addScene("deadmenu", [](Scene &scene) {
+    scene.create()._add<UITextRenderer>("u ded lolsies", WHITE, 64,
+                                        Vector2{100, 100});
+  });
   addScene("game", [this](Scene &scene) {
     // background -----------------------------------
     auto &background = scene.create();
