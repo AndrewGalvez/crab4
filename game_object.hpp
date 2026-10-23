@@ -20,6 +20,11 @@ public:
     return ref;
   }
 
+  template <typename T, typename... Args> GameObject &_add(Args &&...args) {
+    add<T>(std::forward<Args>(args)...);
+    return *this;
+  }
+
   template <typename T> T *get() {
     static_assert(std::is_base_of_v<Component, T>,
                   "get<T>: T must derive from Component");
