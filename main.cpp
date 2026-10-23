@@ -47,6 +47,7 @@ int main() {
           target.texture,
           {0, 0, (float)target.texture.width, -(float)target.texture.height},
           {destX, destY, destW, destH}, {0, 0}, 0.0f, WHITE);
+      DrawFPS(0, 0);
       EndDrawing();
     }
     UnloadRenderTexture(target);

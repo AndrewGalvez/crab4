@@ -1,10 +1,12 @@
 #include "game.hpp"
+#include "button.hpp"
 #include "camera.hpp"
 #include "managers.hpp"
 #include "physics.hpp"
 #include "player.hpp"
 #include "renderers.hpp"
 #include "scene.hpp"
+#include "utils.hpp"
 
 void Game::addScene(const std::string &name, SceneBuilder b) {
   scenebuilders[name] = std::move(b);
@@ -24,9 +26,19 @@ void Game::load(const std::string &name) {
 
 Game::Game() {
   addScene("mainmenu", [](Scene &scene) {});
-  addScene("deadmenu", [](Scene &scene) {
-    scene.create()._add<UITextRenderer>("u ded lolsies", WHITE, 64,
-                                        Vector2{100, 100});
+  addScene("deadmenu", [this](Scene &scene) {
+    scene.create().add<UITextRenderer>(
+        "You Died", WHITE, 64,
+        textPositionCenteredInRect({300, 100, 200, 100}, "You Died", 64));
+    scene.create()
+        ._add<RectangleRenderer>(Rectangle{300, 250, 200, 100}, GRAY)
+        ._add<UITextRenderer>(
+            "restart", BLACK, 32,
+            textPositionCenteredInRect({300, 250, 200, 100}, "restart", 32))
+        .add<Button>([this]() {
+          this->state.pstats.reset();
+          this->switchTo("game");
+        });
   });
   addScene("game", [this](Scene &scene) {
     // background -----------------------------------
@@ -64,18 +76,18 @@ Game::Game() {
 }
 
 void Game::update(float dt) {
-  if (scene)
-    scene->update(dt);
-
   if (!pendingScene.empty()) {
     std::string name = std::move(pendingScene);
     pendingScene.clear();
     load(name);
+    scene->update(0);
   }
+
+  if (scene)
+    scene->update(dt);
 }
 
 void Game::draw() {
   if (scene)
     scene->draw();
-  DrawFPS(0, 0);
 }

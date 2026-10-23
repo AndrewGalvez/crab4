@@ -8,7 +8,7 @@ OBJS := $(SRCS:%.cpp=$(BUILD)/%.o)
 DEPS := $(OBJS:.o=.d)
 
 # -MMD -MP generates .d files so editing a .hpp rebuilds the .cpp files that include it
-CXXFLAGS := -std=c++17 -Wall -Wextra -g -MMD -MP -Wno-unused-parameter
+CXXFLAGS := -std=c++17 -Wall -Wextra -g -MMD -MP -Wno-unused-parameter -Wno-reorder
 
 # If raylib isn't installed system-wide, uncomment and point these at it:
 # CXXFLAGS += -I/path/to/raylib/src

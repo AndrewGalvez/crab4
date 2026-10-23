@@ -1,18 +1,34 @@
 #pragma once
 #include "component.hpp"
 
-struct PlayerStats {
+class PlayerStats {
+public:
   float speed;
+  float _speed;
   float health;
+  float _health;
   float maxHealth;
+  float _maxHealth;
   float bulletDamage;
+  float _bulletDamage;
   float bulletSpeed;
+  float _bulletSpeed;
 
   PlayerStats(float speed = 500.0f, float health = 100.0f,
               float maxHealth = 100.0f, float bulletDamage = 25.0f,
               float bulletSpeed = 2000.0f)
       : speed(speed), health(health), maxHealth(maxHealth),
-        bulletDamage(bulletDamage), bulletSpeed(bulletSpeed) {}
+        bulletDamage(bulletDamage), bulletSpeed(bulletSpeed), _speed(speed),
+        _health(health), _maxHealth(maxHealth), _bulletDamage(bulletDamage),
+        _bulletSpeed(bulletSpeed) {}
+
+  void reset() {
+    speed = _speed;
+    health = _health;
+    maxHealth = _maxHealth;
+    bulletDamage = _bulletDamage;
+    bulletSpeed = _bulletSpeed;
+  }
 };
 
 class PlayerController : public Component {
