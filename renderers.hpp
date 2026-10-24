@@ -33,13 +33,12 @@ public:
 
 class PlayerMagnetCircleDisplayRenderer : public CircleRenderer {
 public:
-  float radius;
-  Color color;
-  float opacity = 100;
-  Vector2 center;
   PlayerMagnetCircleDisplayRenderer(Vector2 center, float radius, Color color)
-      : center(center), radius(radius), color(color) {};
+      : CircleRenderer(center, radius, color) {
+    opacity = 100;
+  };
   void update(float dt) override;
+  void draw() override;
 };
 
 class UITextRenderer : public Renderer {

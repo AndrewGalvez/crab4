@@ -15,11 +15,8 @@ void Gold::update(float dt) {
   float m = owner->scene->game->state.pstats.magnetRadius;
 
   if (!v || !p || !t) {
-    printf("it no work\n");
     return;
   }
-
-  printf("worky!\n");
 
   // distance
   float d = Vector2Distance(
@@ -27,8 +24,10 @@ void Gold::update(float dt) {
       {pt->position.x + pt->scale.x / 2, pt->position.y + pt->scale.y / 2});
 
   if (m >= d) {
-    float dx = pt->position.x - t->position.x;
-    float dy = pt->position.y - t->position.y;
+    float dx =
+        pt->position.x + pt->scale.x / 2 - (t->position.x + t->scale.x / 2);
+    float dy =
+        pt->position.y + pt->scale.y / 2 - (t->position.y + t->scale.y / 2);
     float m = std::sqrt(dx * dx + dy * dy);
     if (m < 0.0001f)
       return;

@@ -4,5 +4,5 @@
 class Gold : public Component {
 public:
   void update(float dt) override;
-  float speed = 1000.0f;
+  float speed = 500.0f;
 };

@@ -9,6 +9,7 @@
 #include "renderers.hpp"
 #include "scene.hpp"
 #include "utils.hpp"
+#include <cstdio>
 #include <raymath.h>
 
 void CollisionManager::update(float dt) {
@@ -55,7 +56,8 @@ void CollisionManager::update(float dt) {
                   Rectangle{et->position.x + et->scale.x / 2 - 5,
                             et->position.y + et->scale.y / 2 - 5, 10, 10},
                   GOLD)
-              ._add<Velocity>(Vector2{0, 0});
+              .add<Velocity>(Vector2{0, 0})
+              .owner->destroyed = false;
         }
         break;
       }
@@ -63,8 +65,8 @@ void CollisionManager::update(float dt) {
   }
 
   auto enemies = owner->scene->findAllWithComponent<EnemyController>();
+  auto golds = owner->scene->findAllWithComponent<Gold>();
   auto *player = owner->scene->findFirstWithComponent<PlayerController>();
-
   for (auto *e : enemies) {
     if (e->destroyed || !e->get<c_Transform>())
       continue;
@@ -88,6 +90,26 @@ void CollisionManager::update(float dt) {
       if (player->get<PlayerController>()->stats.health <= 0) {
         player->scene->game->switchTo("deadmenu");
       }
+    }
+  }
+
+  auto *pt = player->get<c_Transform>();
+  if (!pt)
+    return;
+
+  for (auto *g : golds) {
+    if (!g->destroyed)
+      continue;
+    printf("gold gold gold\n");
+    auto *gt = g->get<c_Transform>();
+    if (!gt)
+      continue;
+    if (CheckCollisionRecs(
+            Rectangle{gt->position.x, gt->position.y, gt->scale.x, gt->scale.y},
+            Rectangle{pt->position.x, pt->position.y, pt->scale.x,
+                      pt->scale.y})) {
+      printf("big collide time\n");
+      g->scene->game->state.pstats.gold++;
     }
   }
 };

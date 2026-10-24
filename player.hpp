@@ -15,10 +15,12 @@ public:
   float _bulletSpeed;
   float magnetRadius;
   float _magnetRadius;
+  int gold;
 
   PlayerStats(float speed = 500.0f, float health = 100.0f,
               float maxHealth = 100.0f, float bulletDamage = 25.0f,
-              float bulletSpeed = 2000.0f, float magnetRadius = 5000.0f)
+              float bulletSpeed = 2000.0f, float magnetRadius = 500.0f,
+              int gold = 0)
       : speed(speed), health(health), maxHealth(maxHealth),
         bulletDamage(bulletDamage), bulletSpeed(bulletSpeed), _speed(speed),
         _health(health), _maxHealth(maxHealth), _bulletDamage(bulletDamage),

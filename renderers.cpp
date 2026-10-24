@@ -41,6 +41,11 @@ void PlayerMagnetCircleDisplayRenderer::update(float dt) {
   radius = owner->scene->game->state.pstats.magnetRadius;
 }
 
+void PlayerMagnetCircleDisplayRenderer::draw() {
+  DrawCircleGradient(center, radius, color, ColorAlpha(color, 0));
+  DrawCircleGradient(center, radius + 20, color, ColorAlpha(color, 0));
+};
+
 void UIPositionLabel::drawUI() {
   DrawText(value.c_str(), (int)pos.x, (int)pos.y, fontSize, color);
 };
