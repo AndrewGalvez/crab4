@@ -15,11 +15,26 @@
 void CollisionManager::update(float dt) {
   auto bullets = owner->scene->findAllWithComponent<Bullet>();
   auto targets = owner->scene->findAllWithComponent<Health>();
+  auto *map = owner->scene->findFirstWithComponent<TileMap>();
+  auto walls = owner->scene->findAllWithComponent<Wall>();
+  auto solids = owner->scene->findAllWithComponent<Solid>();
+  auto enemies = owner->scene->findAllWithComponent<EnemyController>();
+  auto golds = owner->scene->findAllWithComponent<Gold>();
+  auto *player = owner->scene->findFirstWithComponent<PlayerController>();
+  if (!player)
+    return;
 
   for (auto *b : bullets) {
     if (b->destroyed || !b->get<c_Transform>())
       continue;
     Rectangle br = rectOf(b);
+
+    if (map)
+      if (auto *mr = map->get<TileMap>())
+        if (mr->isSolidAtPoint(rectCenter(br))) {
+          owner->scene->destroy(b);
+          continue;
+        }
 
     for (auto *e : targets) {
       if (e->destroyed || !e->get<c_Transform>())
@@ -51,11 +66,6 @@ void CollisionManager::update(float dt) {
     }
   }
 
-  auto enemies = owner->scene->findAllWithComponent<EnemyController>();
-  auto golds = owner->scene->findAllWithComponent<Gold>();
-  auto *player = owner->scene->findFirstWithComponent<PlayerController>();
-  if (!player)
-    return;
   for (auto *e : enemies) {
     if (e->destroyed || !e->get<c_Transform>())
       continue;
@@ -102,9 +112,6 @@ void CollisionManager::update(float dt) {
     }
   }
 
-  auto walls = owner->scene->findAllWithComponent<Wall>();
-  auto solids = owner->scene->findAllWithComponent<Solid>();
-  auto *map = owner->scene->findFirstWithComponent<TileMap>();
   if (map) {
     auto *mapraw = map->get<TileMap>();
     for (auto *s : owner->scene->findAllWithComponent<Solid>())
@@ -114,8 +121,7 @@ void CollisionManager::update(float dt) {
 
 void GameManager::update(float dt) {
   frame++;
-  // spawn three enemies every second
-  if (frame > 20) {
+  if (frame > 40) {
     frame = 0;
 
     auto *p = owner->scene->findFirstWithComponent<PlayerController>();

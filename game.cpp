@@ -96,7 +96,7 @@ Game::Game() {
     scene.create().add<CollisionManager>();
   });
 
-  load("room");
+  load("game");
 }
 
 void Game::update(float dt) {
