@@ -53,7 +53,9 @@ void PlayerController::update(float dt) {
 
   if ((!(this->stats.health <= 0)) &&
       (this->stats.health <= this->stats.maxHealth))
-    this->stats.health += 0.05;
+    this->stats.health += this->stats.health + 0.025 > this->stats.maxHealth
+                              ? this->stats.maxHealth - this->stats.health
+                              : 0.025;
 };
 
 void PlayerHealthbar::drawUI() {

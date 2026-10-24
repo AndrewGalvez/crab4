@@ -48,12 +48,17 @@ Game::Game() {
     // player ---------------------------------------
     auto &player = scene.create();
     player.add<c_Transform>((Vector2){0, 0}, (Vector2){100, 100});
+    player.add<PlayerMagnetCircleDisplayRenderer>(Vector2{0, 0}, 5000.0f,
+                                                  ColorAlpha(BLUE, 100));
     player.add<RectangleRenderer>((Rectangle){0, 0, 100, 100}, RED);
     player.add<UIPositionLabel>();
     player.add<PlayerController>(this->state.pstats);
     player.add<PlayerHealthbar>(
         &player.get<PlayerController>()->stats.health,
         &player.get<PlayerController>()->stats.maxHealth);
+    player.add<Velocity>(Vector2{0.0f, 0.0f});
+    player.add<Friction>(400.0f);
+    player.add<PhysicsManager>();
     // game manager -------------------------------
     auto &gameManager = scene.create();
     gameManager.add<GameManager>();

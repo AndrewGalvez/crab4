@@ -1,6 +1,7 @@
 #pragma once
 #include "component.hpp"
 #include "raylib.h"
+#include <raymath.h>
 #include <string>
 
 class Renderer : public Component {};
@@ -13,6 +14,31 @@ public:
   RectangleRenderer(Rectangle rect, Color color) : rect(rect), color(color) {};
 
   void draw() override;
+  void update(float dt) override;
+};
+
+class CircleRenderer : public Renderer {
+public:
+  float radius;
+  Color color;
+  int opacity = 255;
+  Vector2 center;
+  CircleRenderer(Vector2 center, float radius, Color color)
+      : center(center), radius(radius), color(color) {};
+  CircleRenderer() {};
+
+  void draw() override;
+  void update(float dt) override;
+};
+
+class PlayerMagnetCircleDisplayRenderer : public CircleRenderer {
+public:
+  float radius;
+  Color color;
+  float opacity = 100;
+  Vector2 center;
+  PlayerMagnetCircleDisplayRenderer(Vector2 center, float radius, Color color)
+      : center(center), radius(radius), color(color) {};
   void update(float dt) override;
 };
 

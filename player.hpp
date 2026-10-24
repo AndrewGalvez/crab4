@@ -13,14 +13,17 @@ public:
   float _bulletDamage;
   float bulletSpeed;
   float _bulletSpeed;
+  float magnetRadius;
+  float _magnetRadius;
 
   PlayerStats(float speed = 500.0f, float health = 100.0f,
               float maxHealth = 100.0f, float bulletDamage = 25.0f,
-              float bulletSpeed = 2000.0f)
+              float bulletSpeed = 2000.0f, float magnetRadius = 5000.0f)
       : speed(speed), health(health), maxHealth(maxHealth),
         bulletDamage(bulletDamage), bulletSpeed(bulletSpeed), _speed(speed),
         _health(health), _maxHealth(maxHealth), _bulletDamage(bulletDamage),
-        _bulletSpeed(bulletSpeed) {}
+        _bulletSpeed(bulletSpeed), magnetRadius(magnetRadius),
+        _magnetRadius(magnetRadius) {}
 
   void reset() {
     speed = _speed;

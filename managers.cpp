@@ -3,6 +3,7 @@
 #include "components.hpp"
 #include "enemies.hpp"
 #include "game.hpp"
+#include "gold.hpp"
 #include "player.hpp"
 #include "raylib.h"
 #include "renderers.hpp"
@@ -41,6 +42,20 @@ void CollisionManager::update(float dt) {
                                    Color{255, 0, 0, 255});
           d.add<Lifetime>(60);
           d.add<DeadEnemy>();
+
+          auto *et = e->get<c_Transform>();
+
+          owner->scene->create()
+              ._add<Gold>()
+              ._add<c_Transform>(Vector2{et->position.x + et->scale.x / 2 - 5,
+                                         et->position.y + et->scale.y / 2 - 5},
+                                 Vector2{10, 10})
+              ._add<Lifetime>(60000)
+              ._add<RectangleRenderer>(
+                  Rectangle{et->position.x + et->scale.x / 2 - 5,
+                            et->position.y + et->scale.y / 2 - 5, 10, 10},
+                  GOLD)
+              ._add<Velocity>(Vector2{0, 0});
         }
         break;
       }
@@ -64,6 +79,11 @@ void CollisionManager::update(float dt) {
           Vector2Add(ev->value, Vector2Scale(Vector2Normalize(Vector2Subtract(
                                                  et->position, pt->position)),
                                              4000.0f));
+      player->get<Velocity>()->value = Vector2Add(
+          player->get<Velocity>()->value,
+          Vector2Scale(
+              Vector2Normalize(Vector2Subtract(et->position, pt->position)),
+              -4000.0f));
 
       if (player->get<PlayerController>()->stats.health <= 0) {
         player->scene->game->switchTo("deadmenu");

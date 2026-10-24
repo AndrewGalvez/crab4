@@ -1,5 +1,6 @@
 #include "renderers.hpp"
 #include "camera.hpp"
+#include "game.hpp"
 #include "game_object.hpp"
 #include "physics.hpp"
 #include "scene.hpp"
@@ -17,6 +18,27 @@ void RectangleRenderer::update(float dt) {
   rect.y = t->position.y;
   rect.width = t->scale.x;
   rect.height = t->scale.y;
+}
+
+void CircleRenderer::draw() { DrawCircle(center.x, center.y, radius, color); }
+
+void CircleRenderer::update(float dt) {
+  color.a = (unsigned char)opacity;
+  auto *t = owner->get<c_Transform>();
+  if (!t)
+    return;
+  center.x = t->position.x + t->scale.x / 2;
+  center.y = t->position.y + t->scale.y / 2;
+};
+
+void PlayerMagnetCircleDisplayRenderer::update(float dt) {
+  color.a = (unsigned char)opacity;
+  auto *t = owner->get<c_Transform>();
+  if (!t)
+    return;
+  center.x = t->position.x + t->scale.x / 2;
+  center.y = t->position.y + t->scale.y / 2;
+  radius = owner->scene->game->state.pstats.magnetRadius;
 }
 
 void UIPositionLabel::drawUI() {
