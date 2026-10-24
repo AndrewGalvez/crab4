@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "button.hpp"
 #include "camera.hpp"
+#include "components.hpp"
 #include "managers.hpp"
 #include "physics.hpp"
 #include "player.hpp"
@@ -49,7 +50,7 @@ Game::Game() {
     background.add<BackgroundRenderer>(WHITE, BLACK, Vector2{200, 200});
 
     // player ---------------------------------------
-    auto &player = prefabs::player(scene, &state.pstats);
+    auto &player = prefabs::player(scene, &state.pstats, state.spawnPos);
     // UI
     prefabs::ui(scene, scene.asset_manager, state.pstats);
 
@@ -71,7 +72,7 @@ Game::Game() {
     scene.setActiveCamera(&camraw);
   });
   addScene("room", [this](Scene &scene) {
-    auto &player = prefabs::player(scene, &state.pstats);
+    auto &player = prefabs::player(scene, &state.pstats, state.spawnPos);
     prefabs::ui(scene, scene.asset_manager, state.pstats);
 
     auto &cam = scene.create();
@@ -86,17 +87,19 @@ Game::Game() {
 
     scene.create()
         .add<TileMap>(100.0f, Vector2{-500.0f, -500.0f})
-        .loadFromStrings({"##########", "#........#", "#........#",
+        .loadFromStrings({"####..####", "#........#", "#........#",
                           "#........#", "#........#", "#........#",
                           "#........#", "#........#", "#........#",
                           "##########"});
-
-    prefabs::enemy(scene, -1000, -1000, 100, 100, player.get<c_Transform>());
+    scene.create()
+        ._add<Door>("game", Vector2{0, 100})
+        ._add<RectangleRenderer>(Rectangle{-100, -500, 200, 100}, YELLOW)
+        ._add<c_Transform>(Vector2{-100, -500}, Vector2{200, 100});
 
     scene.create().add<CollisionManager>();
   });
 
-  load("game");
+  load("room");
 }
 
 void Game::update(float dt) {

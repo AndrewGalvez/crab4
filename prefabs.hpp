@@ -12,7 +12,7 @@ GameObject &enemy(Scene &scene, float x, float y, float w, float h,
 GameObject &bullet(Scene &scene, Vector2 pos, float damage, float speed);
 GameObject &gold(Scene &scene, Vector2 center);
 GameObject &deadEnemy(Scene &scene, Rectangle rect);
-GameObject &player(Scene &scene, PlayerStats *stats);
+GameObject &player(Scene &scene, PlayerStats *stats, Vector2 spawnpos);
 GameObject &wall(Scene &scene, Rectangle rect);
 GameObject &ui(Scene &scene, AssetManager &a, PlayerStats &stats);
 }; // namespace prefabs

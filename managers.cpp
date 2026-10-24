@@ -21,8 +21,19 @@ void CollisionManager::update(float dt) {
   auto enemies = owner->scene->findAllWithComponent<EnemyController>();
   auto golds = owner->scene->findAllWithComponent<Gold>();
   auto *player = owner->scene->findFirstWithComponent<PlayerController>();
+  auto doors = owner->scene->findAllWithComponent<Door>();
   if (!player)
     return;
+
+  for (auto *d : doors) {
+    if (d->get<c_Transform>()) {
+      if (CheckCollisionRecs(rectOf(player), rectOf(d))) {
+        auto dr = d->get<Door>();
+        owner->scene->game->switchTo(dr->dest);
+        owner->scene->game->state.spawnPos = dr->arrivesAt;
+      }
+    }
+  }
 
   for (auto *b : bullets) {
     if (b->destroyed || !b->get<c_Transform>())

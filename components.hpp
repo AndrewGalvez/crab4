@@ -1,5 +1,7 @@
 #pragma once
 #include "component.hpp"
+#include <raylib.h>
+#include <string>
 
 class Lifetime : public Component {
 public:
@@ -25,3 +27,11 @@ public:
 class Wall : public Component {};
 
 class Solid : public Component {};
+
+class Door : public Component {
+public:
+  Vector2 arrivesAt;
+  std::string dest;
+
+  Door(std::string dest, Vector2 pso) : arrivesAt(pso) {}
+};
