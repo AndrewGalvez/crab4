@@ -33,5 +33,5 @@ public:
   Vector2 arrivesAt;
   std::string dest;
 
-  Door(std::string dest, Vector2 pso) : arrivesAt(pso) {}
+  Door(std::string dest, Vector2 pso) : arrivesAt(pso), dest(dest) {}
 };
