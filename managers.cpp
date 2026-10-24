@@ -8,6 +8,7 @@
 #include "prefabs.hpp"
 #include "raylib.h"
 #include "scene.hpp"
+#include "tilemap.hpp"
 #include "utils.hpp"
 #include <raymath.h>
 
@@ -103,27 +104,11 @@ void CollisionManager::update(float dt) {
 
   auto walls = owner->scene->findAllWithComponent<Wall>();
   auto solids = owner->scene->findAllWithComponent<Solid>();
-
-  for (auto *s : solids) {
-    auto *st = s->get<c_Transform>();
-    if (!st)
-      continue;
-
-    for (auto *w : walls) {
-      Rectangle mover = rectOf(s);
-      Vector2 push;
-      if (resolveRectVsStatic(mover, rectOf(w), push)) {
-        st->position.x += push.x;
-        st->position.y += push.y;
-
-        if (auto *v = s->get<Velocity>()) {
-          if (push.x != 0)
-            v->value.x = 0;
-          if (push.y != 0)
-            v->value.y = 0;
-        }
-      }
-    }
+  auto *map = owner->scene->findFirstWithComponent<TileMap>();
+  if (map) {
+    auto *mapraw = map->get<TileMap>();
+    for (auto *s : owner->scene->findAllWithComponent<Solid>())
+      mapraw->collide(s);
   }
 };
 

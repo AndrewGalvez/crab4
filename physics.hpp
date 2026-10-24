@@ -6,7 +6,9 @@ class c_Transform : public Component {
 public:
   Vector2 position = {0, 0};
   Vector2 scale = {0, 0};
-  explicit c_Transform(Vector2 p, Vector2 scale) : position(p), scale(scale) {}
+  Vector2 _pos = {0, 0};
+  explicit c_Transform(Vector2 p, Vector2 scale)
+      : position(p), scale(scale), _pos(p) {}
 };
 
 class Velocity : public Component {

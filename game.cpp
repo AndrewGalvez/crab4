@@ -7,6 +7,7 @@
 #include "prefabs.hpp"
 #include "renderers.hpp"
 #include "scene.hpp"
+#include "tilemap.hpp"
 #include "utils.hpp"
 #include <string>
 
@@ -83,10 +84,12 @@ Game::Game() {
     camraw.setZoom();
     scene.setActiveCamera(&camraw);
 
-    prefabs::wall(scene, Rectangle{-200, -200, 1000, 100});
-    prefabs::wall(scene, Rectangle{-200, -200, 100, 1000});
-    prefabs::wall(scene, Rectangle{-200, 800, 1000, 100});
-    prefabs::wall(scene, Rectangle{800, -200, 100, 1000});
+    scene.create()
+        .add<TileMap>(100.0f, Vector2{-500.0f, -500.0f})
+        .loadFromStrings({"##########", "#........#", "#........#",
+                          "#........#", "#........#", "#........#",
+                          "#........#", "#........#", "#........#",
+                          "##########"});
 
     prefabs::enemy(scene, -1000, -1000, 100, 100, player.get<c_Transform>());
 
