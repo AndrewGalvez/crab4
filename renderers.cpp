@@ -91,3 +91,29 @@ void BackgroundRenderer::draw() {
 void UITextRenderer::drawUI() {
   DrawText(value.c_str(), pos.x, pos.y, fontSize, color);
 };
+
+void ImageRenderer::update(float dt) {
+  frame++;
+  if (maxFrame < frame) {
+    frame = 0;
+    animFrame++;
+    if (animFrameMax < animFrame)
+      animFrame = 0;
+  }
+
+  getSourceFromFrame(*this);
+
+  auto *t = owner->get<c_Transform>();
+  if (!t)
+    return;
+
+  dest.x = t->position.x;
+  dest.y = t->position.y;
+  dest.width = t->scale.x;
+  dest.height = t->scale.y;
+};
+
+void ImageRenderer::draw() {
+  DrawTexturePro(*owner->scene->asset_manager.texture(file), source, dest,
+                 origin, rotation, WHITE);
+};

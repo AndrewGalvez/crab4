@@ -9,7 +9,6 @@
 #include "renderers.hpp"
 #include "scene.hpp"
 #include "utils.hpp"
-#include <cstdio>
 #include <raymath.h>
 
 void CollisionManager::update(float dt) {
@@ -50,14 +49,18 @@ void CollisionManager::update(float dt) {
               ._add<Gold>()
               ._add<c_Transform>(Vector2{et->position.x + et->scale.x / 2 - 5,
                                          et->position.y + et->scale.y / 2 - 5},
-                                 Vector2{10, 10})
+                                 Vector2{40, 40})
               ._add<Lifetime>(60000)
-              ._add<RectangleRenderer>(
+              ._add<Velocity>(Vector2{0, 0})
+              ._add<ImageRenderer>(
+                  "assets/gold.png",
                   Rectangle{et->position.x + et->scale.x / 2 - 5,
-                            et->position.y + et->scale.y / 2 - 5, 10, 10},
-                  GOLD)
-              .add<Velocity>(Vector2{0, 0})
-              .owner->destroyed = false;
+                            et->position.y + et->scale.y / 2 - 5, 40, 40},
+                  Rectangle{0, 0, 16, 16}, 0, 10, Vector2{0, 0}, 0.0f,
+                  [](ImageRenderer &self) {
+                    self.source = Rectangle{16.0f * self.animFrame, 0, 16, 16};
+                  },
+                  0, 8);
         }
         break;
       }
@@ -98,9 +101,8 @@ void CollisionManager::update(float dt) {
     return;
 
   for (auto *g : golds) {
-    if (!g->destroyed)
+    if (g->destroyed)
       continue;
-    printf("gold gold gold\n");
     auto *gt = g->get<c_Transform>();
     if (!gt)
       continue;
@@ -108,8 +110,9 @@ void CollisionManager::update(float dt) {
             Rectangle{gt->position.x, gt->position.y, gt->scale.x, gt->scale.y},
             Rectangle{pt->position.x, pt->position.y, pt->scale.x,
                       pt->scale.y})) {
-      printf("big collide time\n");
       g->scene->game->state.pstats.gold++;
+      g->scene->destroy(g);
+      g->scene->asset_manager.playSound("assets/goldPickup.wav");
     }
   }
 };

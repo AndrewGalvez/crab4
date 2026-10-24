@@ -1,6 +1,7 @@
 #pragma once
 #include "component.hpp"
 #include "raylib.h"
+#include <functional>
 #include <raymath.h>
 #include <string>
 
@@ -70,5 +71,31 @@ public:
   Vector2 tilesize;
   explicit BackgroundRenderer(Color a, Color b, Vector2 t)
       : color_a(a), color_b(b), tilesize(t) {};
+  void draw() override;
+};
+
+class ImageRenderer : public Renderer {
+public:
+  std::string file;
+  Rectangle dest;
+  Rectangle source;
+  int frame;
+  int maxFrame;
+  int animFrame;
+  int animFrameMax;
+  Vector2 origin;
+  float rotation;
+  std::function<void(ImageRenderer &)> getSourceFromFrame = nullptr;
+
+  ImageRenderer(std::string file, Rectangle dest, Rectangle source, int frame,
+                int maxFrame, Vector2 origin, float rotation,
+                std::function<void(ImageRenderer &)> getSourceFromFrame,
+                int animFrame, int animFrameMax)
+      : file(file), dest(dest), source(source), frame(frame),
+        maxFrame(maxFrame), origin(origin), rotation(rotation),
+        getSourceFromFrame(getSourceFromFrame), animFrame(animFrame),
+        animFrameMax(animFrameMax) {}
+
+  void update(float dt) override;
   void draw() override;
 };
