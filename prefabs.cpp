@@ -22,6 +22,7 @@ GameObject &enemy(Scene &scene, float x, float y, float w, float h,
   e.add<Velocity>(Vector2{0, 0});
   e.add<PhysicsManager>();
   e.add<Friction>(200.0f);
+  e.add<Solid>();
   return e;
 };
 
@@ -64,6 +65,7 @@ GameObject &gold(Scene &scene, Vector2 center) {
         self.source = Rectangle{16.0f * self.animFrame, 0, 16, 16};
       },
       0, 8);
+  e.add<Solid>();
 
   return e;
 };
@@ -88,6 +90,15 @@ GameObject &player(Scene &scene, PlayerStats *stats) {
   player.add<Velocity>(Vector2{0.0f, 0.0f});
   player.add<Friction>(400.0f);
   player.add<PhysicsManager>();
+  player.add<Solid>();
   return player;
+};
+
+GameObject &wall(Scene &scene, Rectangle rect) {
+  auto &w = scene.create();
+  w.add<Wall>();
+  w.add<c_Transform>(Vector2{rect.x, rect.y}, Vector2{rect.width, rect.height});
+  w.add<RectangleRenderer>(rect, DARKGRAY);
+  return w;
 };
 } // namespace prefabs

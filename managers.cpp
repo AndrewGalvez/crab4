@@ -7,7 +7,6 @@
 #include "player.hpp"
 #include "prefabs.hpp"
 #include "raylib.h"
-#include "renderers.hpp"
 #include "scene.hpp"
 #include "utils.hpp"
 #include <raymath.h>
@@ -54,6 +53,8 @@ void CollisionManager::update(float dt) {
   auto enemies = owner->scene->findAllWithComponent<EnemyController>();
   auto golds = owner->scene->findAllWithComponent<Gold>();
   auto *player = owner->scene->findFirstWithComponent<PlayerController>();
+  if (!player)
+    return;
   for (auto *e : enemies) {
     if (e->destroyed || !e->get<c_Transform>())
       continue;
@@ -97,6 +98,31 @@ void CollisionManager::update(float dt) {
       g->scene->game->state.pstats.gold++;
       g->scene->destroy(g);
       g->scene->asset_manager.playSound("assets/goldPickup.wav");
+    }
+  }
+
+  auto walls = owner->scene->findAllWithComponent<Wall>();
+  auto solids = owner->scene->findAllWithComponent<Solid>();
+
+  for (auto *s : solids) {
+    auto *st = s->get<c_Transform>();
+    if (!st)
+      continue;
+
+    for (auto *w : walls) {
+      Rectangle mover = rectOf(s);
+      Vector2 push;
+      if (resolveRectVsStatic(mover, rectOf(w), push)) {
+        st->position.x += push.x;
+        st->position.y += push.y;
+
+        if (auto *v = s->get<Velocity>()) {
+          if (push.x != 0)
+            v->value.x = 0;
+          if (push.y != 0)
+            v->value.y = 0;
+        }
+      }
     }
   }
 };

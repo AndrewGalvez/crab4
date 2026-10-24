@@ -21,3 +21,7 @@ public:
   int value;
   Health(int value = 1) : value(value) {}
 };
+
+class Wall : public Component {};
+
+class Solid : public Component {};

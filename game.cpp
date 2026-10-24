@@ -85,9 +85,21 @@ Game::Game() {
     camraw.setZoom();
     scene.setActiveCamera(&camraw);
   });
-  addScene("room", [this](Scene &scene) {});
+  addScene("room", [this](Scene &scene) {
+    auto &player = prefabs::player(scene, &state.pstats);
+    auto &cam = scene.create();
+    cam.add<c_Transform>(Vector2{0, 0}, Vector2{1, 1});
+    auto &camraw = cam.add<c_Camera>();
+    camraw.target = &player;
+    camraw.targetOffset = {50, 50};
+    camraw.followSpeed = 5.0f;
+    camraw.zoom = 0.4f;
+    camraw.setZoom();
+    scene.setActiveCamera(&camraw);
+    prefabs::wall(scene, Rectangle{-200, -200, 1000, 100});
+  });
 
-  load("game");
+  load("room");
 }
 
 void Game::update(float dt) {

@@ -12,4 +12,5 @@ GameObject &bullet(Scene &scene, Vector2 pos, float damage, float speed);
 GameObject &gold(Scene &scene, Vector2 center);
 GameObject &deadEnemy(Scene &scene, Rectangle rect);
 GameObject &player(Scene &scene, PlayerStats *stats);
+GameObject &wall(Scene &scene, Rectangle rect);
 }; // namespace prefabs
