@@ -18,6 +18,16 @@ public:
   void update(float dt) override;
 };
 
+class RectangleRendererUI : public Renderer {
+public:
+  Rectangle rect;
+  Color color;
+  int opacity = 255;
+  RectangleRendererUI(Rectangle rect, Color color)
+      : rect(rect), color(color) {};
+  void drawUI() override;
+};
+
 class CircleRenderer : public Renderer {
 public:
   float radius;
@@ -48,11 +58,17 @@ public:
   Color color;
   int fontSize;
   Vector2 pos;
+  std::function<void(UITextRenderer &)> sync = nullptr;
 
-  UITextRenderer(std::string v, Color c, int fs, Vector2 p)
-      : value(v), color(c), fontSize(fs), pos(p) {};
+  UITextRenderer(std::string v, Color c, int fs, Vector2 p,
+                 std::function<void(UITextRenderer &)> sync = nullptr)
+      : value(v), color(c), fontSize(fs), pos(p), sync(sync) {};
 
   void drawUI() override;
+  void update(float dt) override {
+    if (sync)
+      sync(*this);
+  }
 };
 
 class UIPositionLabel : public UITextRenderer {
@@ -98,4 +114,30 @@ public:
 
   void update(float dt) override;
   void draw() override;
+};
+
+class ImageRendererUI : public Renderer {
+public:
+  std::string file;
+  Rectangle dest;
+  Rectangle source;
+  int frame;
+  int maxFrame;
+  int animFrame;
+  int animFrameMax;
+  Vector2 origin;
+  float rotation;
+  std::function<void(ImageRendererUI &)> getSourceFromFrame = nullptr;
+
+  ImageRendererUI(std::string file, Rectangle dest, Rectangle source, int frame,
+                  int maxFrame, Vector2 origin, float rotation,
+                  std::function<void(ImageRendererUI &)> getSourceFromFrame,
+                  int animFrame, int animFrameMax)
+      : file(file), dest(dest), source(source), frame(frame),
+        maxFrame(maxFrame), origin(origin), rotation(rotation),
+        getSourceFromFrame(getSourceFromFrame), animFrame(animFrame),
+        animFrameMax(animFrameMax) {}
+
+  void update(float dt) override;
+  void drawUI() override;
 };

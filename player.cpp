@@ -12,7 +12,7 @@ void PlayerController::update(float dt) {
   auto *t = owner->get<c_Transform>();
   if (!t)
     return;
-  float speed = stats.speed;
+  float speed = stats->speed;
   // movement --------------------------
   if (IsKeyDown(KEY_A))
     t->position.x -= speed * dt;
@@ -42,20 +42,20 @@ void PlayerController::update(float dt) {
                                    ->get<c_Camera>()
                                    ->raw()),
             (Vector2){x, y})),
-        stats.bulletSpeed);
+        stats->bulletSpeed);
 
     b.add<Velocity>(v);
     b.add<Lifetime>(100);
     b.add<PhysicsManager>();
     b.add<RectangleRenderer>((Rectangle){x, y, sx, sy}, BLUE);
-    b.add<Bullet>(stats.bulletDamage);
+    b.add<Bullet>(stats->bulletDamage);
   }
 
-  if ((!(this->stats.health <= 0)) &&
-      (this->stats.health <= this->stats.maxHealth))
-    this->stats.health += this->stats.health + 0.025 > this->stats.maxHealth
-                              ? this->stats.maxHealth - this->stats.health
-                              : 0.025;
+  if ((!(this->stats->health <= 0)) &&
+      (this->stats->health <= this->stats->maxHealth))
+    this->stats->health += this->stats->health + 0.025 > this->stats->maxHealth
+                               ? this->stats->maxHealth - this->stats->health
+                               : 0.025;
 };
 
 void PlayerHealthbar::drawUI() {

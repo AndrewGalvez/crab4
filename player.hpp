@@ -40,8 +40,8 @@ public:
 
 class PlayerController : public Component {
 public:
-  PlayerStats stats;
-  PlayerController(PlayerStats stats) : stats(stats) {};
+  PlayerStats *stats;
+  PlayerController(PlayerStats *stats) : stats(stats) {};
   void update(float dt) override;
 };
 

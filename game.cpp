@@ -7,6 +7,7 @@
 #include "renderers.hpp"
 #include "scene.hpp"
 #include "utils.hpp"
+#include <string>
 
 void Game::addScene(const std::string &name, SceneBuilder b) {
   scenebuilders[name] = std::move(b);
@@ -52,13 +53,29 @@ Game::Game() {
                                                   ColorAlpha(BLUE, 100));
     player.add<RectangleRenderer>((Rectangle){0, 0, 100, 100}, RED);
     player.add<UIPositionLabel>();
-    player.add<PlayerController>(this->state.pstats);
-    player.add<PlayerHealthbar>(
-        &player.get<PlayerController>()->stats.health,
-        &player.get<PlayerController>()->stats.maxHealth);
+    player.add<PlayerController>(&this->state.pstats);
     player.add<Velocity>(Vector2{0.0f, 0.0f});
     player.add<Friction>(400.0f);
     player.add<PhysicsManager>();
+    // UI
+    scene
+        .create()
+
+        ._add<RectangleRendererUI>(Rectangle{275, 450, 250, 150},
+                                   ColorAlpha(GRAY, 0.8))
+        ._add<ImageRendererUI>(
+            "assets/gold.png", Rectangle{280, 460, 50, 50},
+            Rectangle{0, 0, 16, 16}, 0, 10, Vector2{0, 0}, 0.0f,
+            [](ImageRendererUI &self) {
+              self.source = Rectangle{16.0f * self.animFrame, 0, 16, 16};
+            },
+            0, 8)
+        ._add<PlayerHealthbar>(&state.pstats.health, &state.pstats.maxHealth)
+        ._add<UITextRenderer>("300", WHITE, 50, Vector2{340, 465},
+                              [&stats = state.pstats](UITextRenderer &self) {
+                                self.value = std::to_string(stats.gold);
+                              });
+
     // game manager -------------------------------
     auto &gameManager = scene.create();
     gameManager.add<GameManager>();

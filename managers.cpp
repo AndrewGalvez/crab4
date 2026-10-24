@@ -79,7 +79,7 @@ void CollisionManager::update(float dt) {
       c_Transform *pt = player->get<c_Transform>();
       c_Transform *et = e->get<c_Transform>();
       Velocity *ev = e->get<Velocity>();
-      player->get<PlayerController>()->stats.health -= 25;
+      player->get<PlayerController>()->stats->health -= 25;
       e->get<Velocity>()->value =
           Vector2Add(ev->value, Vector2Scale(Vector2Normalize(Vector2Subtract(
                                                  et->position, pt->position)),
@@ -90,7 +90,7 @@ void CollisionManager::update(float dt) {
               Vector2Normalize(Vector2Subtract(et->position, pt->position)),
               -4000.0f));
 
-      if (player->get<PlayerController>()->stats.health <= 0) {
+      if (player->get<PlayerController>()->stats->health <= 0) {
         player->scene->game->switchTo("deadmenu");
       }
     }

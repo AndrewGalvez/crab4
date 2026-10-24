@@ -9,6 +9,8 @@
 
 void RectangleRenderer::draw() { DrawRectangleRec(rect, color); }
 
+void RectangleRendererUI::drawUI() { DrawRectangleRec(rect, color); }
+
 void RectangleRenderer::update(float dt) {
   color.a = (unsigned char)opacity;
   auto *t = owner->get<c_Transform>();
@@ -114,6 +116,32 @@ void ImageRenderer::update(float dt) {
 };
 
 void ImageRenderer::draw() {
+  DrawTexturePro(*owner->scene->asset_manager.texture(file), source, dest,
+                 origin, rotation, WHITE);
+};
+
+void ImageRendererUI::update(float dt) {
+  frame++;
+  if (maxFrame < frame) {
+    frame = 0;
+    animFrame++;
+    if (animFrameMax < animFrame)
+      animFrame = 0;
+  }
+
+  getSourceFromFrame(*this);
+
+  auto *t = owner->get<c_Transform>();
+  if (!t)
+    return;
+
+  dest.x = t->position.x;
+  dest.y = t->position.y;
+  dest.width = t->scale.x;
+  dest.height = t->scale.y;
+};
+
+void ImageRendererUI::drawUI() {
   DrawTexturePro(*owner->scene->asset_manager.texture(file), source, dest,
                  origin, rotation, WHITE);
 };
