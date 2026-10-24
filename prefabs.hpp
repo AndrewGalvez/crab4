@@ -1,5 +1,6 @@
 #pragma once
 
+#include "assets.hpp"
 #include "game_object.hpp"
 #include "physics.hpp"
 #include "player.hpp"
@@ -13,4 +14,5 @@ GameObject &gold(Scene &scene, Vector2 center);
 GameObject &deadEnemy(Scene &scene, Rectangle rect);
 GameObject &player(Scene &scene, PlayerStats *stats);
 GameObject &wall(Scene &scene, Rectangle rect);
+GameObject &ui(Scene &scene, AssetManager &a, PlayerStats &stats);
 }; // namespace prefabs

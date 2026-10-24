@@ -101,4 +101,26 @@ GameObject &wall(Scene &scene, Rectangle rect) {
   w.add<RectangleRenderer>(rect, DARKGRAY);
   return w;
 };
+
+GameObject &ui(Scene &scene, AssetManager &a, PlayerStats &s) {
+  auto &ui =
+      scene
+          .create()
+
+          ._add<RectangleRendererUI>(Rectangle{275, 450, 250, 150},
+                                     ColorAlpha(GRAY, 0.8))
+          ._add<ImageRendererUI>(
+              "assets/gold.png", Rectangle{280, 460, 50, 50},
+              Rectangle{0, 0, 16, 16}, 0, 10, Vector2{0, 0}, 0.0f,
+              [](ImageRendererUI &self) {
+                self.source = Rectangle{16.0f * self.animFrame, 0, 16, 16};
+              },
+              0, 8)
+          ._add<PlayerHealthbar>(&s.health, &s.maxHealth)
+          ._add<UITextRenderer>("300", WHITE, 50, Vector2{340, 465},
+                                [&stats = s](UITextRenderer &self) {
+                                  self.value = std::to_string(stats.gold);
+                                });
+  return ui;
+}
 } // namespace prefabs

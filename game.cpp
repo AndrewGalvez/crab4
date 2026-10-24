@@ -50,23 +50,7 @@ Game::Game() {
     // player ---------------------------------------
     auto &player = prefabs::player(scene, &state.pstats);
     // UI
-    scene
-        .create()
-
-        ._add<RectangleRendererUI>(Rectangle{275, 450, 250, 150},
-                                   ColorAlpha(GRAY, 0.8))
-        ._add<ImageRendererUI>(
-            "assets/gold.png", Rectangle{280, 460, 50, 50},
-            Rectangle{0, 0, 16, 16}, 0, 10, Vector2{0, 0}, 0.0f,
-            [](ImageRendererUI &self) {
-              self.source = Rectangle{16.0f * self.animFrame, 0, 16, 16};
-            },
-            0, 8)
-        ._add<PlayerHealthbar>(&state.pstats.health, &state.pstats.maxHealth)
-        ._add<UITextRenderer>("300", WHITE, 50, Vector2{340, 465},
-                              [&stats = state.pstats](UITextRenderer &self) {
-                                self.value = std::to_string(stats.gold);
-                              });
+    prefabs::ui(scene, scene.asset_manager, state.pstats);
 
     // game manager -------------------------------
     auto &gameManager = scene.create();
@@ -87,6 +71,8 @@ Game::Game() {
   });
   addScene("room", [this](Scene &scene) {
     auto &player = prefabs::player(scene, &state.pstats);
+    prefabs::ui(scene, scene.asset_manager, state.pstats);
+
     auto &cam = scene.create();
     cam.add<c_Transform>(Vector2{0, 0}, Vector2{1, 1});
     auto &camraw = cam.add<c_Camera>();
@@ -96,7 +82,15 @@ Game::Game() {
     camraw.zoom = 0.4f;
     camraw.setZoom();
     scene.setActiveCamera(&camraw);
+
     prefabs::wall(scene, Rectangle{-200, -200, 1000, 100});
+    prefabs::wall(scene, Rectangle{-200, -200, 100, 1000});
+    prefabs::wall(scene, Rectangle{-200, 800, 1000, 100});
+    prefabs::wall(scene, Rectangle{800, -200, 100, 1000});
+
+    prefabs::enemy(scene, -1000, -1000, 100, 100, player.get<c_Transform>());
+
+    scene.create().add<CollisionManager>();
   });
 
   load("room");
