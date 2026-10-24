@@ -4,6 +4,7 @@
 #include "managers.hpp"
 #include "physics.hpp"
 #include "player.hpp"
+#include "prefabs.hpp"
 #include "renderers.hpp"
 #include "scene.hpp"
 #include "utils.hpp"
@@ -47,16 +48,7 @@ Game::Game() {
     background.add<BackgroundRenderer>(WHITE, BLACK, Vector2{200, 200});
 
     // player ---------------------------------------
-    auto &player = scene.create();
-    player.add<c_Transform>((Vector2){0, 0}, (Vector2){100, 100});
-    player.add<PlayerMagnetCircleDisplayRenderer>(Vector2{0, 0}, 5000.0f,
-                                                  ColorAlpha(BLUE, 100));
-    player.add<RectangleRenderer>((Rectangle){0, 0, 100, 100}, RED);
-    player.add<UIPositionLabel>();
-    player.add<PlayerController>(&this->state.pstats);
-    player.add<Velocity>(Vector2{0.0f, 0.0f});
-    player.add<Friction>(400.0f);
-    player.add<PhysicsManager>();
+    auto &player = prefabs::player(scene, &state.pstats);
     // UI
     scene
         .create()
@@ -93,8 +85,9 @@ Game::Game() {
     camraw.setZoom();
     scene.setActiveCamera(&camraw);
   });
+  addScene("room", [this](Scene &scene) {});
 
-  load("deadmenu");
+  load("game");
 }
 
 void Game::update(float dt) {

@@ -25,7 +25,7 @@ public:
         bulletDamage(bulletDamage), bulletSpeed(bulletSpeed), _speed(speed),
         _health(health), _maxHealth(maxHealth), _bulletDamage(bulletDamage),
         _bulletSpeed(bulletSpeed), magnetRadius(magnetRadius),
-        _magnetRadius(magnetRadius) {}
+        _magnetRadius(magnetRadius), gold(gold) {}
 
   void reset() {
     speed = _speed;

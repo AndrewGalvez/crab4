@@ -5,6 +5,7 @@
 #include "game.hpp"
 #include "gold.hpp"
 #include "player.hpp"
+#include "prefabs.hpp"
 #include "raylib.h"
 #include "renderers.hpp"
 #include "scene.hpp"
@@ -37,30 +38,13 @@ void CollisionManager::update(float dt) {
         owner->scene->destroy(b);
         if (hp->value <= 0) {
           owner->scene->destroy(e);
-          auto &d = owner->scene->create();
-          d.add<RectangleRenderer>(e->get<RectangleRenderer>()->rect,
-                                   Color{255, 0, 0, 255});
-          d.add<Lifetime>(60);
-          d.add<DeadEnemy>();
 
           auto *et = e->get<c_Transform>();
+          prefabs::gold(*owner->scene,
+                        Vector2{et->position.x + et->scale.x / 2,
+                                et->position.y + et->scale.y / 2});
 
-          owner->scene->create()
-              ._add<Gold>()
-              ._add<c_Transform>(Vector2{et->position.x + et->scale.x / 2 - 5,
-                                         et->position.y + et->scale.y / 2 - 5},
-                                 Vector2{40, 40})
-              ._add<Lifetime>(60000)
-              ._add<Velocity>(Vector2{0, 0})
-              ._add<ImageRenderer>(
-                  "assets/gold.png",
-                  Rectangle{et->position.x + et->scale.x / 2 - 5,
-                            et->position.y + et->scale.y / 2 - 5, 40, 40},
-                  Rectangle{0, 0, 16, 16}, 0, 10, Vector2{0, 0}, 0.0f,
-                  [](ImageRenderer &self) {
-                    self.source = Rectangle{16.0f * self.animFrame, 0, 16, 16};
-                  },
-                  0, 8);
+          prefabs::deadEnemy(*owner->scene, rectOf(e));
         }
         break;
       }
@@ -168,13 +152,6 @@ void GameManager::update(float dt) {
       break;
     }
 
-    auto &e = owner->scene->create();
-    e.add<c_Transform>(Vector2{x, y}, Vector2{w, h});
-    e.add<RectangleRenderer>(Rectangle{x, y, w, h}, GREEN);
-    e.add<EnemyController>(200.0f, p->get<c_Transform>());
-    e.add<Health>(50);
-    e.add<Velocity>(Vector2{0, 0});
-    e.add<PhysicsManager>();
-    e.add<Friction>(200.0f);
+    prefabs::enemy(*owner->scene, x, y, w, h, p->get<c_Transform>());
   }
 };

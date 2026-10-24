@@ -3,6 +3,7 @@
 #include "components.hpp"
 #include "game_object.hpp"
 #include "physics.hpp"
+#include "prefabs.hpp"
 #include "raymath.h"
 #include "renderers.hpp"
 #include "scene.hpp"
@@ -27,30 +28,16 @@ void PlayerController::update(float dt) {
     if (!owner->scene->getActiveCamera())
       return;
 
-    auto &b = owner->scene->create();
-    b.scene = owner->scene;
     float sx = 20;
     float sy = 20;
     float x = (t->position.x + (t->scale.x / 2)) - sx / 2;
     float y = (t->position.y + (t->scale.y / 2)) - sy / 2;
 
-    b.add<c_Transform>(Vector2{x, y}, Vector2{sx, sy});
-    Vector2 v = Vector2Scale(
-        Vector2Normalize(Vector2Subtract(
-            GetScreenToWorld2D(GetMousePosition(),
-                               owner->scene->findAllWithComponent<c_Camera>()[0]
-                                   ->get<c_Camera>()
-                                   ->raw()),
-            (Vector2){x, y})),
-        stats->bulletSpeed);
-
-    b.add<Velocity>(v);
-    b.add<Lifetime>(100);
-    b.add<PhysicsManager>();
-    b.add<RectangleRenderer>((Rectangle){x, y, sx, sy}, BLUE);
-    b.add<Bullet>(stats->bulletDamage);
+    prefabs::bullet(*owner->scene, Vector2{x, y}, stats->bulletDamage,
+                    stats->bulletSpeed);
   }
 
+  // regen
   if ((!(this->stats->health <= 0)) &&
       (this->stats->health <= this->stats->maxHealth))
     this->stats->health += this->stats->health + 0.025 > this->stats->maxHealth
