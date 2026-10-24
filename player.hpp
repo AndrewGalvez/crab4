@@ -33,6 +33,8 @@ public:
     maxHealth = _maxHealth;
     bulletDamage = _bulletDamage;
     bulletSpeed = _bulletSpeed;
+    magnetRadius = _magnetRadius;
+    gold = 0;
   }
 };
 
