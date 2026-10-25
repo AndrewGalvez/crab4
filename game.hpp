@@ -25,4 +25,6 @@ public:
   void switchTo(const std::string &name);
 
   GameState state;
+  bool transitioning = false;
+  int transitionProgress = 0;
 };

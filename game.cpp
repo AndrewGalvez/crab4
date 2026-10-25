@@ -10,13 +10,17 @@
 #include "scene.hpp"
 #include "tilemap.hpp"
 #include "utils.hpp"
+#include <raylib.h>
 #include <string>
 
 void Game::addScene(const std::string &name, SceneBuilder b) {
   scenebuilders[name] = std::move(b);
 }
 
-void Game::switchTo(const std::string &name) { pendingScene = name; }
+void Game::switchTo(const std::string &name) {
+  pendingScene = name;
+  transitioning = true;
+}
 
 void Game::load(const std::string &name) {
   auto it = scenebuilders.find(name);
@@ -87,7 +91,7 @@ Game::Game() {
 
     scene.create()
         .add<TileMap>(100.0f, Vector2{-500.0f, -500.0f})
-        .loadFromStrings({"####..####", "#........#", "#........#",
+        .loadFromStrings({"##########", "#........#", "#........#",
                           "#........#", "#........#", "#........#",
                           "#........#", "#........#", "#........#",
                           "##########"});
@@ -103,11 +107,27 @@ Game::Game() {
 }
 
 void Game::update(float dt) {
-  if (!pendingScene.empty()) {
-    std::string name = std::move(pendingScene);
-    pendingScene.clear();
-    load(name);
-    scene->update(0);
+  if (transitioning) {
+    if (!pendingScene.empty()) {
+      transitionProgress++;
+      if (transitionProgress == 100) {
+        std::string name = std::move(pendingScene);
+        pendingScene.clear();
+        load(name);
+        scene->update(0);
+        scene->update(0);
+        scene->update(0);
+      }
+    } else {
+      transitionProgress--;
+      if (transitionProgress == 0)
+        transitioning = false;
+    }
+    if (transitionProgress % 50 == 0 && transitionProgress != 0)
+      scene->asset_manager.playSound(
+          transitionProgress == 50 ? "assets/hit1.wav" : "assets/hit2.wav");
+
+    return;
   }
 
   if (scene)
@@ -117,4 +137,8 @@ void Game::update(float dt) {
 void Game::draw() {
   if (scene)
     scene->draw();
+  if (transitioning)
+    DrawRectangle(
+        0, 0, 800, 600,
+        ColorAlpha(DARKGREEN, easeInOut(transitionProgress / 100.0f)));
 }

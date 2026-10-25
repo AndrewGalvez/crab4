@@ -37,3 +37,8 @@ inline bool resolveRectVsStatic(Rectangle &mover, Rectangle wall,
     push = {0, mc.y < wc.y ? -o.height : o.height};
   return true;
 }
+
+inline float easeInOut(float t) {
+  t = (t < 0.0) ? 0.0 : (t > 1.0) ? 1.0 : t;
+  return t * t * (3.0 - 2.0 * t);
+}
