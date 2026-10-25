@@ -1,5 +1,6 @@
 #pragma once
 #include "assets.hpp"
+#include "components.hpp"
 #include "game_object.hpp"
 #include <memory>
 #include <vector>
@@ -40,6 +41,19 @@ public:
       if (go->get<T>()) {
         res = go.get();
         return res;
+      }
+    return res;
+  }
+
+  GameObject *findFirstWithID(std::string id) {
+    GameObject *res = nullptr;
+    for (auto &go : contents)
+      if (auto *i = go->get<ID>()) {
+        if (i->val == id) {
+
+          res = go.get();
+          return res;
+        }
       }
     return res;
   }

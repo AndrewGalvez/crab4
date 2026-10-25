@@ -4,7 +4,7 @@
 #include <functional>
 
 struct GameState {
-  Vector2 spawnPos = {0, 0};
+  Vector2 spawnPos = {-50, -50};
   PlayerStats pstats;
 };
 

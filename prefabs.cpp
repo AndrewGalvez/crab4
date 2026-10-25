@@ -87,7 +87,6 @@ GameObject &player(Scene &scene, PlayerStats *stats, Vector2 spawnpos) {
   player.add<PlayerMagnetCircleDisplayRenderer>(Vector2{x, y}, 5000.0f,
                                                 ColorAlpha(BLUE, 100));
   player.add<RectangleRenderer>((Rectangle){x, y, 100, 100}, RED);
-  player.add<UIPositionLabel>();
   player.add<PlayerController>(stats);
   player.add<Velocity>(Vector2{0.0f, 0.0f});
   player.add<Friction>(400.0f);

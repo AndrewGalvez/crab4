@@ -128,6 +128,29 @@ void CollisionManager::update(float dt) {
     for (auto *s : owner->scene->findAllWithComponent<Solid>())
       mapraw->collide(s);
   }
+
+  for (auto *s : solids) {
+    auto *st = s->get<c_Transform>();
+    if (!st)
+      continue;
+
+    for (auto *w : walls) {
+      Rectangle mover = rectOf(s);
+      Vector2 push;
+      if (resolveRectVsStatic(mover, rectOf(w), push)) {
+        st->position.x += push.x;
+        st->position.y += push.y;
+
+        // kill velocity into the wall so knockback doesn't "stick" or jitter
+        if (auto *v = s->get<Velocity>()) {
+          if (push.x != 0)
+            v->value.x = 0;
+          if (push.y != 0)
+            v->value.y = 0;
+        }
+      }
+    }
+  }
 };
 
 void GameManager::update(float dt) {

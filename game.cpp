@@ -100,7 +100,7 @@ Game::Game() {
         ._add<RectangleRenderer>(Rectangle{-100, -500, 200, 100}, YELLOW)
         ._add<c_Transform>(Vector2{-100, -500}, Vector2{200, 100});
     scene.create()
-        ._add<Door>("shop", Vector2{0, -899})
+        ._add<Door>("shop", Vector2{-50, -899})
         ._add<ImageRenderer>(
             "assets/door.png", Rectangle{-100, 400, 200, 100},
             Rectangle{0, 0, 32, 16}, 0, 0, Vector2{0, 0}, 0.0f,
@@ -116,15 +116,14 @@ Game::Game() {
     auto &cam = scene.create();
     cam.add<c_Transform>(Vector2{0, 0}, Vector2{1, 1});
     auto &camraw = cam.add<c_Camera>();
-    camraw.target = &player;
-    camraw.targetOffset = {50, 50};
-    camraw.followSpeed = 5.0f;
-    camraw.zoom = 0.4f;
+    camraw.followSpeed = 0.0f;
+    camraw.zoom = 0.3f;
+    camraw.targetOffset = {0, 0};
     camraw.setZoom();
     scene.setActiveCamera(&camraw);
 
     scene.create()
-        .add<TileMap>(100.0f, Vector2{-1000.0f, -1000.0f})
+        .add<TileMap>(100.0f, Vector2{-1350.0f, -1300.0f})
         .loadFromFile("maps/shop");
 
     scene.create().add<CollisionManager>();
@@ -135,7 +134,40 @@ Game::Game() {
             "assets/door.png", Rectangle{-100, -1000, 200, 100},
             Rectangle{0, 0, 32, 16}, 0, 0, Vector2{0, 0}, 0.0f,
             [](ImageRenderer &self) {}, 0, 0)
-        ._add<c_Transform>(Vector2{-50, -1000}, Vector2{200, 100});
+        ._add<c_Transform>(Vector2{-100, -1000}, Vector2{200, 100});
+
+    scene.create()
+        ._add<ImageRenderer>(
+            "assets/shopkeep1.png", Rectangle{-950, -900, 500, 250},
+            Rectangle{0, 0, 32, 16}, 0, 0, Vector2{0, 0}, 0.0f,
+            [](ImageRenderer &self) {}, 0, 0)
+        ._add<c_Transform>(Vector2{-950, -900}, Vector2{500, 250})
+        ._add<Wall>();
+    scene.create()
+        ._add<Enabled>(false)
+        ._add<UITextRenderer>("(E) Talk", WHITE, 32, Vector2{500, 50},
+                              [](UITextRenderer &self) {
+                                if (self.owner->get<Enabled>()->value)
+                                  self.value = "(E) Talk";
+                                else
+                                  self.value = "";
+                              })
+        ._add<ID>("shopkeep1interact");
+    auto &shopkeep1triggercollider = scene.create()._add<c_Transform>(
+        Vector2{-950, -900}, Vector2{700, 450});
+    shopkeep1triggercollider.add<CollisionListener>(
+        [](CollisionListener &self) {
+          self.owner->scene->findFirstWithID("shopkeep1interact")
+              ->get<Enabled>()
+              ->value = true;
+        },
+        [](CollisionListener &self) {
+          self.owner->scene->findFirstWithID("shopkeep1interact")
+              ->get<Enabled>()
+              ->value = false;
+        },
+        [](CollisionListener &self) {},
+        shopkeep1triggercollider.get<c_Transform>(), player.get<c_Transform>());
   });
 
   load("shop");
@@ -144,7 +176,7 @@ Game::Game() {
 void Game::update(float dt) {
   if (transitioning) {
     if (!pendingScene.empty()) {
-      transitionProgress++;
+      transitionProgress += 4;
       if (transitionProgress == 100) {
         std::string name = std::move(pendingScene);
         pendingScene.clear();
