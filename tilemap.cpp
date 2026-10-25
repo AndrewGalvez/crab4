@@ -3,6 +3,9 @@
 #include "scene.hpp"
 #include "utils.hpp"
 #include <cmath>
+#include <raylib.h>
+#include <sstream>
+#include <string>
 
 void TileMap::loadFromStrings(const std::vector<std::string> &rows) {
   height = (int)rows.size();
@@ -16,6 +19,19 @@ void TileMap::loadFromStrings(const std::vector<std::string> &rows) {
       if (rows[y][x] == '#')
         tiles[y * width + x] = TILE_WALL;
 }
+
+void TileMap::loadFromFile(std::string file) {
+  std::string t = LoadFileText(file.c_str());
+  std::vector<std::string> lines;
+  std::stringstream ss(t);
+  std::string line;
+
+  while (std::getline(ss, line)) {
+    lines.push_back(line);
+  }
+
+  loadFromStrings(lines);
+};
 
 unsigned char TileMap::at(int tx, int ty) const {
   if (tx < 0 || ty < 0 || tx >= width || ty >= height)

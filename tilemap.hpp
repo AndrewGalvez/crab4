@@ -19,6 +19,7 @@ public:
       : tileSize(tileSize), origin(origin) {}
 
   void loadFromStrings(const std::vector<std::string> &rows);
+  void loadFromFile(std::string file);
   unsigned char at(int tx, int ty) const;
   bool isSolid(int tx, int ty) const { return at(tx, ty) == TILE_WALL; }
   bool isSolidAtPoint(Vector2 p) const;

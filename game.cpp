@@ -99,11 +99,46 @@ Game::Game() {
         ._add<Door>("game", Vector2{0, 100})
         ._add<RectangleRenderer>(Rectangle{-100, -500, 200, 100}, YELLOW)
         ._add<c_Transform>(Vector2{-100, -500}, Vector2{200, 100});
+    scene.create()
+        ._add<Door>("shop", Vector2{0, -899})
+        ._add<ImageRenderer>(
+            "assets/door.png", Rectangle{-100, 400, 200, 100},
+            Rectangle{0, 0, 32, 16}, 0, 0, Vector2{0, 0}, 0.0f,
+            [](ImageRenderer &self) {}, 0, 0)
+        ._add<c_Transform>(Vector2{-100, 400}, Vector2{200, 100});
 
     scene.create().add<CollisionManager>();
   });
+  addScene("shop", [this](Scene &scene) {
+    auto &player = prefabs::player(scene, &state.pstats, state.spawnPos);
+    prefabs::ui(scene, scene.asset_manager, state.pstats);
 
-  load("room");
+    auto &cam = scene.create();
+    cam.add<c_Transform>(Vector2{0, 0}, Vector2{1, 1});
+    auto &camraw = cam.add<c_Camera>();
+    camraw.target = &player;
+    camraw.targetOffset = {50, 50};
+    camraw.followSpeed = 5.0f;
+    camraw.zoom = 0.4f;
+    camraw.setZoom();
+    scene.setActiveCamera(&camraw);
+
+    scene.create()
+        .add<TileMap>(100.0f, Vector2{-1000.0f, -1000.0f})
+        .loadFromFile("maps/shop");
+
+    scene.create().add<CollisionManager>();
+    scene.create().add<PhysicsManager>();
+    scene.create()
+        ._add<Door>("room", Vector2{-50, 299})
+        ._add<ImageRenderer>(
+            "assets/door.png", Rectangle{-100, -1000, 200, 100},
+            Rectangle{0, 0, 32, 16}, 0, 0, Vector2{0, 0}, 0.0f,
+            [](ImageRenderer &self) {}, 0, 0)
+        ._add<c_Transform>(Vector2{-50, -1000}, Vector2{200, 100});
+  });
+
+  load("shop");
 }
 
 void Game::update(float dt) {
