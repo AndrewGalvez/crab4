@@ -26,3 +26,18 @@ void CollisionListener::update(float dt) {
     }
   }
 };
+
+void HoverListener::update(float dt) {
+  if (CheckCollisionPointRec(GetMousePosition(), rectOf(me->owner))) {
+    if (!hovering) {
+      onHoverStart(*this);
+      hovering = true;
+    }
+    whileColliding(*this);
+  } else {
+    if (hovering) {
+      onHoverStop(*this);
+      hovering = false;
+    }
+  }
+};

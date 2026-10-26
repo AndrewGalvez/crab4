@@ -110,7 +110,7 @@ Game::Game() {
     scene.create().add<CollisionManager>();
   });
   addScene("shop", [this](Scene &scene) {
-    auto &player = prefabs::player(scene, &state.pstats, state.spawnPos);
+    prefabs::player(scene, &state.pstats, state.spawnPos);
     prefabs::ui(scene, scene.asset_manager, state.pstats);
 
     auto &cam = scene.create();
@@ -142,35 +142,54 @@ Game::Game() {
             Rectangle{0, 0, 32, 16}, 0, 0, Vector2{0, 0}, 0.0f,
             [](ImageRenderer &self) {}, 0, 0)
         ._add<c_Transform>(Vector2{-950, -900}, Vector2{500, 250})
-        ._add<Wall>();
-    scene.create()
-        ._add<Enabled>(false)
-        ._add<UITextRenderer>("(E) Talk", WHITE, 32, Vector2{500, 50},
-                              [](UITextRenderer &self) {
-                                if (self.owner->get<Enabled>()->value)
-                                  self.value = "(E) Talk";
-                                else
-                                  self.value = "";
-                              })
-        ._add<ID>("shopkeep1interact");
-    auto &shopkeep1triggercollider = scene.create()._add<c_Transform>(
-        Vector2{-950, -900}, Vector2{700, 450});
-    shopkeep1triggercollider.add<CollisionListener>(
-        [](CollisionListener &self) {
-          self.owner->scene->findFirstWithID("shopkeep1interact")
-              ->get<Enabled>()
-              ->value = true;
-        },
-        [](CollisionListener &self) {
-          self.owner->scene->findFirstWithID("shopkeep1interact")
-              ->get<Enabled>()
-              ->value = false;
-        },
-        [](CollisionListener &self) {},
-        shopkeep1triggercollider.get<c_Transform>(), player.get<c_Transform>());
+        ._add<Door>("shopkeep1", Vector2{0, 0});
   });
 
-  load("shop");
+  addScene("shopkeep1", [this](Scene &scene) {
+    scene.create()
+        ._add<ID>("shopkeep1dialogue")
+        .add<UITextRenderer>("hello i am jimbler\n buy my stuff", WHITE, 32,
+                             Vector2{0, 0});
+    scene.create().add<ImageRendererUI>(
+        "assets/waltuh.png", Rectangle{0, 100, 250, 500},
+        Rectangle{0, 0, 240, 330}, 0, 0, Vector2{0, 0}, 0.0f,
+        [](ImageRendererUI &self) {}, 0, 0);
+    auto &lpi = scene.create()
+                    ._add<ImageRendererUI>(
+                        "assets/luckpotion.png", Rectangle{350, 100, 100, 100},
+                        Rectangle{0, 0, 8, 8}, 0, 0, Vector2{0, 0}, 0.0f,
+                        [](ImageRendererUI &self) {}, 0, 0)
+                    ._add<c_Transform>(Vector2{350, 100}, Vector2{100, 100});
+
+    lpi.add<HoverListener>(
+        [](HoverListener &self) {
+          self.owner->scene->findFirstWithID("shopkeep1dialogue")
+              ->get<UITextRenderer>()
+              ->value =
+              "mmm yes, this makes you\n twice as lucky for one minute";
+          self.owner->scene->asset_manager.playSound("assets/tick.wav");
+        },
+        [](HoverListener &self) {}, [](HoverListener &self) {},
+        lpi.get<c_Transform>());
+    scene.create().add<UITextRenderer>(
+        "Luck Potion", WHITE, 24,
+        textPositionCenteredInRect({350, 215, 100, 1}, "Luck Potion", 24));
+    scene.create()
+        ._add<ImageRendererUI>(
+            "assets/gold.png", Rectangle{260, 500, 50, 50},
+            Rectangle{0, 0, 16, 16}, 0, 10, Vector2{0, 0}, 0.0f,
+            [](ImageRendererUI &self) {
+              self.source = Rectangle{16.0f * self.animFrame, 0, 16, 16};
+            },
+            0, 8)
+        .add<UITextRenderer>(
+            "0", WHITE, 50, Vector2{325, 505},
+            [&stats = this->state.pstats](UITextRenderer &self) {
+              self.value = std::to_string(stats.gold);
+            });
+  });
+
+  load("shopkeep1");
 }
 
 void Game::update(float dt) {

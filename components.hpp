@@ -64,6 +64,24 @@ public:
   void update(float dt) override;
 };
 
+class HoverListener : public Component {
+public:
+  std::function<void(HoverListener &l)> onHoverStart;
+  std::function<void(HoverListener &l)> onHoverStop;
+  std::function<void(HoverListener &l)> whileColliding;
+  c_Transform *me = nullptr;
+  bool hovering = false;
+
+  HoverListener(std::function<void(HoverListener &l)> onHoverStart,
+                std::function<void(HoverListener &l)> onHoverStop,
+                std::function<void(HoverListener &l)> whileColliding,
+                c_Transform *t)
+      : onHoverStart(onHoverStart), onHoverStop(onHoverStop),
+        whileColliding(whileColliding), me(t) {}
+
+  void update(float dt) override;
+};
+
 class ID : public Component {
 public:
   std::string val;
