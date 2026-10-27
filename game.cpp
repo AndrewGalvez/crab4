@@ -33,7 +33,13 @@ void Game::load(const std::string &name) {
 }
 
 Game::Game() {
-  addScene("mainmenu", [](Scene &scene) {});
+  addScene("mainmenu", [this](Scene &scene) {
+    scene.create()._add<UITextRenderer>("crab ^ 4", WHITE, 52, Vector2{15, 5});
+    scene.create()
+        ._add<Button>([this]() { this->switchTo("room"); })
+        ._add<RectangleRenderer>(Rectangle{50, 100, 300, 50}, DARKGRAY)
+        ._add<UITextRenderer>("Play el crab", WHITE, 45, Vector2{55, 102});
+  });
   addScene("deadmenu", [this](Scene &scene) {
     scene.create().add<UITextRenderer>(
         "You Died", WHITE, 64,
@@ -57,6 +63,11 @@ Game::Game() {
     auto &player = prefabs::player(scene, &state.pstats, state.spawnPos);
     // UI
     prefabs::ui(scene, scene.asset_manager, state.pstats);
+
+    scene.create()
+        ._add<RectangleRenderer>(Rectangle{-100, -100, 200, 100}, YELLOW)
+        ._add<c_Transform>(Vector2{-100, -100}, Vector2{200, 100})
+        .add<Door>("room", Vector2{0, 0});
 
     // game manager -------------------------------
     auto &gameManager = scene.create();
@@ -149,7 +160,7 @@ Game::Game() {
     scene.create()
         ._add<ID>("shopkeep1dialogue")
         .add<UITextRenderer>("hello i am jimbler\n buy my stuff", WHITE, 32,
-                             Vector2{0, 0});
+                             Vector2{5, 5});
     scene.create().add<ImageRendererUI>(
         "assets/waltuh.png", Rectangle{0, 100, 250, 500},
         Rectangle{0, 0, 240, 330}, 0, 0, Vector2{0, 0}, 0.0f,
@@ -165,12 +176,15 @@ Game::Game() {
         [](HoverListener &self) {
           self.owner->scene->findFirstWithID("shopkeep1dialogue")
               ->get<UITextRenderer>()
-              ->value =
-              "mmm yes, this makes you\n twice as lucky for one minute";
+              ->value = "2x luck for a minute \n(chance to increase base luck)";
           self.owner->scene->asset_manager.playSound("assets/tick.wav");
         },
-        [](HoverListener &self) {}, [](HoverListener &self) {},
-        lpi.get<c_Transform>());
+        [](HoverListener &self) {
+          self.owner->scene->findFirstWithID("shopkeep1dialogue")
+              ->get<UITextRenderer>()
+              ->value = "hello i am jimbler\nbuy my stuff";
+        },
+        [](HoverListener &self) {}, lpi.get<c_Transform>());
     scene.create().add<UITextRenderer>(
         "Luck Potion", WHITE, 24,
         textPositionCenteredInRect({350, 215, 100, 1}, "Luck Potion", 24));
@@ -187,9 +201,49 @@ Game::Game() {
             [&stats = this->state.pstats](UITextRenderer &self) {
               self.value = std::to_string(stats.gold);
             });
+    scene.create()
+        ._add<ImageRendererUI>(
+            "assets/luckpotion.png", Rectangle{265, 450, 40, 40},
+            Rectangle{0, 0, 8, 8}, 0, 0, Vector2{0, 0}, 0.0f,
+            [](ImageRendererUI &self) {}, 0, 0)
+        ._add<UITextRenderer>(
+            "0", WHITE, 50, Vector2{325, 450},
+            [&stats = this->state.pstats](UITextRenderer &self) {
+              self.value = std::to_string(stats.luckPotions);
+            });
+    scene.create()
+        ._add<Button>([this]() {
+          if (this->state.pstats.gold >
+              16 + 8 * this->state.pstats.luckPotions) {
+            this->state.pstats.gold -= 16 + 8 * this->state.pstats.luckPotions;
+            this->state.pstats.luckPotions++;
+            this->scene->asset_manager.playSound("assets/buy.wav");
+          } else
+            this->scene->asset_manager.playSound("assets/buyfail.wav");
+        })
+        ._add<RectangleRenderer>(Rectangle{500, 100, 200, 50}, DARKGRAY)
+        .add<UITextRenderer>("Buy", WHITE, 46,
+                             textPositionCenteredInRect(
+                                 Rectangle{500, 100, 200, 50}, "Buy", 46));
+    scene.create()._add<UITextRenderer>(
+        "Cost: 16", WHITE, 46, Vector2{500, 155}, [this](UITextRenderer &self) {
+          self.value = "Cost: " +
+                       std::to_string(16 + 8 * this->state.pstats.luckPotions);
+          if (16 + 8 * this->state.pstats.luckPotions >
+              this->state.pstats.gold) {
+            self.color = RED;
+          } else
+            self.color = WHITE;
+        });
+    scene.create()
+        ._add<RectangleRenderer>(Rectangle{600, 500, 200, 100}, DARKGRAY)
+        ._add<Button>([this]() { this->switchTo("shop"); })
+        ._add<UITextRenderer>(
+            "Back", WHITE, 50,
+            textPositionCenteredInRect({600, 500, 200, 100}, "Back", 50));
   });
 
-  load("shopkeep1");
+  load("mainmenu");
 }
 
 void Game::update(float dt) {

@@ -16,16 +16,17 @@ public:
   float magnetRadius;
   float _magnetRadius;
   int gold;
+  int luckPotions;
 
   PlayerStats(float speed = 500.0f, float health = 100.0f,
               float maxHealth = 100.0f, float bulletDamage = 25.0f,
               float bulletSpeed = 2000.0f, float magnetRadius = 500.0f,
-              int gold = 0)
+              int gold = 0, int luckPotions = 0)
       : speed(speed), health(health), maxHealth(maxHealth),
         bulletDamage(bulletDamage), bulletSpeed(bulletSpeed), _speed(speed),
         _health(health), _maxHealth(maxHealth), _bulletDamage(bulletDamage),
         _bulletSpeed(bulletSpeed), magnetRadius(magnetRadius),
-        _magnetRadius(magnetRadius), gold(gold) {}
+        _magnetRadius(magnetRadius), gold(gold), luckPotions(luckPotions) {}
 
   void reset() {
     speed = _speed;
@@ -35,6 +36,7 @@ public:
     bulletSpeed = _bulletSpeed;
     magnetRadius = _magnetRadius;
     gold = 0;
+    luckPotions = 0;
   }
 };
 

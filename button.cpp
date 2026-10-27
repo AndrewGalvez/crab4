@@ -15,7 +15,7 @@ void Button::update(float dt) {
       rr->color = ColorBrightness(rr->color, -0.1f);
       hovered = true;
     }
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
       this->onClicked();
     };
   } else if (hovered) {
